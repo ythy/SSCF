@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/action_get_images"
+        android:orderInCategory="110"
+        android:title="获取图片"/>
+    <item
+        android:id="@+id/action_update_saint"
+        android:orderInCategory="120"
+        android:title="更新数据"/>
+</menu>

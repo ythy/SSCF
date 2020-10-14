@@ -1,0 +1,80 @@
+#
+# generated on 2020/10/14 10:43:07
+#
+# --table-start--
+dataClass=com.mx.cosmo.orm.vo.SaintInfo
+tableName=saintinfo
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=_id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=name
+# --field-end--
+# --field-start--
+fieldName=unitId
+columnName=unit_id
+# --field-end--
+# --field-start--
+fieldName=type
+# --field-end--
+# --field-start--
+fieldName=lane
+# --field-end--
+# --field-start--
+fieldName=activeTime
+columnName=active_time
+# --field-end--
+# --field-start--
+fieldName=tiersPVP
+columnName=tiers_PVP
+# --field-end--
+# --field-start--
+fieldName=tiersCrusade
+columnName=tiers_crusade
+# --field-end--
+# --field-start--
+fieldName=tiersPVE
+columnName=tiers_PVE
+# --field-end--
+# --field-start--
+fieldName=power
+# --field-end--
+# --field-start--
+fieldName=vitalityRate
+columnName=grow_rate_vitality
+# --field-end--
+# --field-start--
+fieldName=auraRate
+columnName=grow_rate_aura
+# --field-end--
+# --field-start--
+fieldName=techRate
+columnName=grow_rate_tech
+# --field-end--
+# --field-start--
+fieldName=vitality
+# --field-end--
+# --field-start--
+fieldName=aura
+# --field-end--
+# --field-start--
+fieldName=technique
+# --field-end--
+# --field-start--
+fieldName=hp
+# --field-end--
+# --field-start--
+fieldName=physAttack
+columnName=phys_attack
+# --field-end--
+# --field-start--
+fieldName=furyAttack
+columnName=fury_attack
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
