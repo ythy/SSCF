@@ -9,8 +9,8 @@ object Setting {
     val RESOURCES_REMOTE_URL = "https://sscfdata.s3.amazonaws.com/"
 
     val SAINT_MAX_COUNT = 304
-    val SAINT_LAST_COUNT = 0
     val IMAGE_SMALL_LAST_COUNT = 304
-    val IMAGE_FULL_LAST_COUNT = 0
+    val IMAGE_FULL_LAST_COUNT = 304
+    val IMAGE_SKILL_LAST_COUNT = 304
 
 }

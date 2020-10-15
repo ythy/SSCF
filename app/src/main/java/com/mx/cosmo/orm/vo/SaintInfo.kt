@@ -1,8 +1,10 @@
 package com.mx.cosmo.orm.vo
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.j256.ormlite.field.DatabaseField
 
-class SaintInfo {
+class SaintInfo() : Parcelable {
 
     companion object{
         const val TABLE_NAME = "saintinfo"
@@ -25,6 +27,17 @@ class SaintInfo {
         const val COLUMN_HP = "hp"
         const val COLUMN_PHYS_ATTACK = "phys_attack"
         const val COLUMN_FURY_ATTACK = "fury_attack"
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<SaintInfo> {
+            override fun createFromParcel(parcel: Parcel): SaintInfo {
+                return SaintInfo(parcel)
+            }
+
+            override fun newArray(size: Int): Array<SaintInfo?> {
+                return arrayOfNulls(size)
+            }
+        }
     }
 
     @DatabaseField(generatedId = true, allowGeneratedIdInsert = true, columnName = ID)
@@ -83,5 +96,53 @@ class SaintInfo {
 
     @DatabaseField(columnName = COLUMN_FURY_ATTACK)
     var furyAttack:Int = 0
+
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readInt()
+        name = parcel.readString()
+        unitId = parcel.readInt()
+        type = parcel.readString()
+        lane = parcel.readString()
+        activeTime = parcel.readString()
+        tiersPVP = parcel.readString()
+        tiersCrusade = parcel.readString()
+        tiersPVE = parcel.readString()
+        power = parcel.readInt()
+        vitalityRate = parcel.readDouble()
+        auraRate = parcel.readDouble()
+        techRate = parcel.readDouble()
+        vitality = parcel.readInt()
+        aura = parcel.readInt()
+        technique = parcel.readInt()
+        hp = parcel.readInt()
+        physAttack = parcel.readInt()
+        furyAttack = parcel.readInt()
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
+        parcel.writeString(name)
+        parcel.writeInt(unitId)
+        parcel.writeString(type)
+        parcel.writeString(lane)
+        parcel.writeString(activeTime)
+        parcel.writeString(tiersPVP)
+        parcel.writeString(tiersCrusade)
+        parcel.writeString(tiersPVE)
+        parcel.writeInt(power)
+        parcel.writeDouble(vitalityRate)
+        parcel.writeDouble(auraRate)
+        parcel.writeDouble(techRate)
+        parcel.writeInt(vitality)
+        parcel.writeInt(aura)
+        parcel.writeInt(technique)
+        parcel.writeInt(hp)
+        parcel.writeInt(physAttack)
+        parcel.writeInt(furyAttack)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
 
 }

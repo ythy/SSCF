@@ -6,7 +6,7 @@ import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.RuntimeExceptionDao
 import com.mx.cosmo.orm.vo.SaintInfo
 
-class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExceptionDao<SaintInfo, Int>(SaintInfoDaoImp.getDao(orm)) {
+class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExceptionDao<SaintInfo, Int>(getDao(orm)) {
 
     companion object{
         var dao: Dao<SaintInfo, Int>? = null

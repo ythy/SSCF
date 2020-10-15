@@ -8,6 +8,7 @@ import java.io.*
 import android.net.ConnectivityManager
 import android.util.Log
 import com.mx.cosmo.orm.vo.SaintInfo
+import com.mx.cosmo.orm.vo.SkillsInfo
 
 /**
  * Created by maoxin on 2018/10/9.
@@ -16,7 +17,7 @@ class Utils {
 
     companion object{
 
-        fun loadJSONFromAsset(context: Context, filename:String): ArrayList<SaintInfo> {
+        fun loadJSONFromAsset(context: Context, filename:String): Pair<ArrayList<SaintInfo>, ArrayList<SkillsInfo>>{
             var json: String? = null
             try {
                 var file:InputStream? = context.getAssets().open(filename)
@@ -29,7 +30,8 @@ class Utils {
                 ex.printStackTrace()
             }
 
-            val result = ArrayList<SaintInfo>()
+            val saintList = ArrayList<SaintInfo>()
+            val skillsList = ArrayList<SkillsInfo>()
             val datas = JSONObject(json).get("saints") as JSONArray
             var i = datas.length()
             while( i-- > 0){
@@ -91,9 +93,22 @@ class Utils {
                     saint.tiersCrusade =  tiers.getString("Crusade")
                     saint.tiersPVE =  tiers.getString("PVE")
                 }
-                result.add(saint)
+                val skills = if (obj.has("skills"))  obj.getJSONArray("skills") else null
+                if(skills != null){
+                    for(k in 0 until skills.length() - 1 ){
+                        val skillsInfo = SkillsInfo()
+                        val skillObject =  skills.get(k) as JSONObject
+                        skillsInfo.unitId = skillObject.getInt("id")
+                        skillsInfo.saintId = getSkillIdFromUnitId(skillObject.getInt("id"))
+                        skillsInfo.name = if (skillObject.has("name")) skillObject.getString("name") else ""
+                        skillsInfo.description = if (skillObject.has("description")) skillObject.getString("description") else ""
+                        skillsInfo.effects = ""
+                        skillsList.add(skillsInfo)
+                    }
+                }
+                saintList.add(saint)
             }
-            return result
+            return Pair(saintList, skillsList)
         }
 
 
@@ -105,6 +120,11 @@ class Utils {
         fun getIdFromUnitId(unitId:Int):Int{
             return unitId.toString().substring(3, 6).toInt()
         }
+
+        private fun getSkillIdFromUnitId(unitId:Int):Int{
+            return unitId.toString().substring(2, 5).toInt()
+        }
+
 
     }
 

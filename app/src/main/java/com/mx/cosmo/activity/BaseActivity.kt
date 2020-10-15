@@ -18,7 +18,10 @@ open class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var mSP: SharedPreferences
 
-    val MY_PERMISSIONS_REQUEST:Int = 102
+    companion object{
+       const val MY_PERMISSIONS_REQUEST:Int = 102
+    }
+
     val permissions:Array<String> = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     override fun onCreate(savedInstanceState: Bundle?) {

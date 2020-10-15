@@ -9,6 +9,8 @@ import com.j256.ormlite.table.TableUtils
 import com.mx.cosmo.orm.vo.SaintInfo
 import com.mx.cosmo.R
 import com.mx.cosmo.orm.imp.SaintInfoDaoImp
+import com.mx.cosmo.orm.imp.SkillsInfoDaoImp
+import com.mx.cosmo.orm.vo.SkillsInfo
 import java.sql.SQLException
 
 
@@ -34,7 +36,7 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
     }
 
     override fun onUpgrade(database: SQLiteDatabase, connectionSource: ConnectionSource, oldVersion: Int, newVersion: Int) {
-        if(oldVersion <= 1){ // new : 5
+        if(oldVersion <= 1){
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_VITALITY + " INTEGER ; ")
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_AURA + " INTEGER ; ")
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_TECH + " INTEGER ; ")
@@ -42,17 +44,33 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_PHYS_ATTACK + " INTEGER ; ")
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_FURY_ATTACK + " INTEGER ; ")
         }
+        if(oldVersion <= 2){
+            getSkillsInfoDao().executeRaw(" CREATE TABLE " + SkillsInfo.TABLE_NAME + " ( "
+                    + SkillsInfo.ID + " INTEGER PRIMARY KEY , "
+                    + SkillsInfo.COLUMN_SAINT_ID + " INTEGER , "
+                    + SkillsInfo.COLUMN_NAME + " VARCHAR , "
+                    + SkillsInfo.COLUMN_DESCRIPTION + " VARCHAR , "
+                    + SkillsInfo.COLUMN_EFFECTS + " VARCHAR , "
+                    + SkillsInfo.COLUMN_IMAGE + " BLOB )")
+        }
+        if(oldVersion <= 3){
+            getSkillsInfoDao().executeRaw("ALTER TABLE " + SkillsInfo.TABLE_NAME + " ADD COLUMN  " + SkillsInfo.COLUMN_UNIT_ID + " INTEGER ; ")
+        }
     }
 
     fun getSaintInfoDao(): SaintInfoDaoImp {
         return SaintInfoDaoImp(this)
     }
 
+    fun getSkillsInfoDao(): SkillsInfoDaoImp {
+        return SkillsInfoDaoImp(this)
+    }
+
     companion object {
         // name of the database file for your application
         private const val DATABASE_NAME = "cosmo.db"
         // any time you make changes to your database objects, you may have to increase the database version
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 4
         private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java)
     }
 

@@ -12,11 +12,11 @@ import com.mx.cosmo.orm.vo.*
 class DatabaseConfigUtil{
 
     companion object {
-        private val classes = arrayOf<Class<*>>(SaintInfo::class.java)
+        private val classes = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java)
 
         @JvmStatic
         fun main(args: Array<String>) {
-            com.j256.ormlite.android.apptools.OrmLiteConfigUtil.writeConfigFile("ormlite_config.txt", com.mx.cosmo.orm.DatabaseConfigUtil.Companion.classes)
+            com.j256.ormlite.android.apptools.OrmLiteConfigUtil.writeConfigFile("ormlite_config.txt", classes)
         }
     }
 
