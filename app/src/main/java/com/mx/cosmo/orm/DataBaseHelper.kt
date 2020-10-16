@@ -56,6 +56,16 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         if(oldVersion <= 3){
             getSkillsInfoDao().executeRaw("ALTER TABLE " + SkillsInfo.TABLE_NAME + " ADD COLUMN  " + SkillsInfo.COLUMN_UNIT_ID + " INTEGER ; ")
         }
+        if(oldVersion <= 4){
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_PHYS_DEFENSE + " INTEGER ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_FURY_RESISTANCE + " INTEGER ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_ACCURACY + " INTEGER ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_EVASION + " INTEGER ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_HP_RECOVERY + " INTEGER ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_COSMO_RECOVERY + " INTEGER ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_CLOTH + " VARCHAR ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_DESCRIPTION + " VARCHAR ; ")
+        }
     }
 
     fun getSaintInfoDao(): SaintInfoDaoImp {
@@ -70,8 +80,8 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         // name of the database file for your application
         private const val DATABASE_NAME = "cosmo.db"
         // any time you make changes to your database objects, you may have to increase the database version
-        private const val DATABASE_VERSION = 4
-        private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java)
+        private const val DATABASE_VERSION = 5
+        private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java)
     }
 
 

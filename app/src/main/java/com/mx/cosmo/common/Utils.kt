@@ -38,10 +38,11 @@ class Utils {
                 val obj = datas.get(i) as JSONObject
                 val saint = SaintInfo()
                 saint.name = if (obj.has("name")) obj.getString("name") else ""
+                saint.description = if (obj.has("description")) obj.getString("description") else ""
                 saint.unitId = if (obj.has("id")) obj.getInt("id") else 0
                 val stats = if (obj.has("stats"))  obj.getJSONArray("stats") else null
                 if(stats != null){
-                    for(j in 0 until stats.length() - 1 ){
+                    for(j in 0 until stats.length() ){
                         val detail = stats.get(j) as JSONObject
                         when(detail.getString("name")){
                             "Lane" -> {
@@ -84,6 +85,28 @@ class Utils {
                             "Fury Attack" -> {
                                 saint.furyAttack = detail.getInt("uber")
                             }
+
+                            "Phys. Defense" -> {
+                                saint.physDefense = detail.getInt("uber")
+                            }
+                            "Fury Resistance" -> {
+                                saint.furyResistance = detail.getInt("uber")
+                            }
+                            "Accuracy" -> {
+                                saint.accuracy = detail.getInt("uber")
+                            }
+                            "Evasion" -> {
+                                saint.evasion = detail.getInt("uber")
+                            }
+                            "HP Recovery" -> {
+                                saint.recoveryHP = detail.getInt("uber")
+                            }
+                            "Cosmo Recovery" -> {
+                                saint.recoveryCosmo = detail.getInt("uber")
+                            }
+                            "Cloth kind" -> {
+                                saint.cloth = detail.getString("uber")
+                            }
                         }
                     }
                 }
@@ -95,7 +118,7 @@ class Utils {
                 }
                 val skills = if (obj.has("skills"))  obj.getJSONArray("skills") else null
                 if(skills != null){
-                    for(k in 0 until skills.length() - 1 ){
+                    for(k in 0 until skills.length()){
                         val skillsInfo = SkillsInfo()
                         val skillObject =  skills.get(k) as JSONObject
                         skillsInfo.unitId = skillObject.getInt("id")

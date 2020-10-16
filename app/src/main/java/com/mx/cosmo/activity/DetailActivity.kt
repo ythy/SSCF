@@ -27,17 +27,8 @@ import java.net.URL
 
 class DetailActivity: BaseActivity() {
 
-    @BindView(R.id.iv_detail)
-    lateinit var mImageViewDetail:ImageView
-
     @BindView(R.id.ll_skills)
-    lateinit var mSkillsBox: LinearLayout
-
-    @BindView(R.id.tv_name)
-    lateinit var mTextViewName:TextView
-
-    @BindView(R.id.tv_id)
-    lateinit var mTextViewID:TextView
+    lateinit var mSkillsBox:LinearLayout
 
     @OnClick(R.id.btn_update)
     fun onBtnUpdateClickHandler(){
@@ -63,22 +54,47 @@ class DetailActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-        ButterKnife.bind(this)
         this.mSaintInfo = intent.getParcelableExtra("saint")
+        ButterKnife.bind(this)
         this.setBaseView()
         this.setSkill()
     }
 
     private fun setBaseView(){
-        mTextViewName.text = mSaintInfo.name
-        mTextViewID.text = mSaintInfo.unitId.toString()
+        val component = MainUI(window.decorView.rootView)
+        component.name.text = mSaintInfo.name
+        component.cloth.text = mSaintInfo.cloth
+        component.time.text = mSaintInfo.activeTime
+        component.description.text = mSaintInfo.description
+        component.type.text = mSaintInfo.type
+        component.lane.text = mSaintInfo.lane
+        component.power.text = mSaintInfo.power.toString()
+        component.tiers.text = String.format(resources.getString(R.string.saint_tiers), mSaintInfo.tiersPVP, mSaintInfo.tiersCrusade, mSaintInfo.tiersPVE )
+        component.id.text = mSaintInfo.unitId.toString()
+        component.rateVit.text = mSaintInfo.vitalityRate.toString()
+        component.rateAura.text = mSaintInfo.auraRate .toString()
+        component.rateTech.text = mSaintInfo.techRate.toString()
+
+        component.vitality.text = mSaintInfo.vitality.toString()
+        component.aura.text = mSaintInfo.aura.toString()
+        component.tech.text = mSaintInfo.technique.toString()
+        component.hp.text = mSaintInfo.hp.toString()
+        component.physAttack.text = mSaintInfo.physAttack.toString()
+        component.furyAttack.text = mSaintInfo.furyAttack.toString()
+        component.physDefense.text = mSaintInfo.physDefense.toString()
+        component.furyResistance.text = mSaintInfo.furyResistance.toString()
+        component.accuracy.text = mSaintInfo.accuracy.toString()
+        component.evasion.text = mSaintInfo.evasion.toString()
+        component.hpRecovery.text = mSaintInfo.recoveryHP.toString()
+        component.cosmoRecovery.text = mSaintInfo.recoveryCosmo.toString()
+
         val imageDir = File(Environment.getExternalStorageDirectory(), Setting.RESOURCES_FILE_PATH_FULL)
         val file = File(imageDir.path,  "${mSaintInfo.unitId}.png")
         if (file.exists()) {
             val bmp = MediaStore.Images.Media.getBitmap(this.contentResolver, Uri.fromFile(file))
-            mImageViewDetail.setImageBitmap(bmp)
+            component.image.setImageBitmap(bmp)
         } else
-            mImageViewDetail.setImageBitmap(null)
+            component.image.setImageBitmap(null)
     }
 
     private fun setSkill(){
@@ -106,6 +122,89 @@ class DetailActivity: BaseActivity() {
 
         @BindView(R.id.tv_skill_description)
         lateinit var description:TextView
+
+        init {
+            ButterKnife.bind(this, view)
+        }
+
+    }
+
+    class MainUI constructor(view: View){
+
+        @BindView(R.id.iv_detail)
+        lateinit var image:ImageView
+
+        @BindView(R.id.tv_name)
+        lateinit var name:TextView
+
+        @BindView(R.id.tv_cloth)
+        lateinit var cloth:TextView
+
+        @BindView(R.id.tv_time)
+        lateinit var time:TextView
+
+        @BindView(R.id.tv_description)
+        lateinit var description:TextView
+
+        @BindView(R.id.tv_id)
+        lateinit var id:TextView
+
+        @BindView(R.id.tv_tiers)
+        lateinit var tiers:TextView
+
+        @BindView(R.id.tv_type)
+        lateinit var type:TextView
+
+        @BindView(R.id.tv_lane)
+        lateinit var lane:TextView
+
+        @BindView(R.id.tv_power)
+        lateinit var power:TextView
+
+        @BindView(R.id.tv_rate_vit)
+        lateinit var rateVit:TextView
+
+        @BindView(R.id.tv_rate_aura)
+        lateinit var rateAura:TextView
+
+        @BindView(R.id.tv_rate_tech)
+        lateinit var rateTech:TextView
+
+        @BindView(R.id.tv_vitality)
+        lateinit var vitality:TextView
+
+        @BindView(R.id.tv_aura)
+        lateinit var aura:TextView
+
+        @BindView(R.id.tv_tech)
+        lateinit var tech:TextView
+
+        @BindView(R.id.tv_hp)
+        lateinit var hp:TextView
+
+        @BindView(R.id.tv_phys_attack)
+        lateinit var physAttack:TextView
+
+        @BindView(R.id.tv_fury_attack)
+        lateinit var furyAttack:TextView
+
+        @BindView(R.id.tv_phys_defense)
+        lateinit var physDefense:TextView
+
+        @BindView(R.id.tv_fury_resistance)
+        lateinit var furyResistance:TextView
+
+        @BindView(R.id.tv_accuracy)
+        lateinit var accuracy:TextView
+
+        @BindView(R.id.tv_evasion)
+        lateinit var evasion:TextView
+
+        @BindView(R.id.tv_hp_recovery)
+        lateinit var hpRecovery:TextView
+
+        @BindView(R.id.tv_cosmo_recovery)
+        lateinit var cosmoRecovery:TextView
 
         init {
             ButterKnife.bind(this, view)

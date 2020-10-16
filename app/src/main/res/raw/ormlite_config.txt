@@ -1,5 +1,5 @@
 #
-# generated on 2020/10/15 11:30:53
+# generated on 2020/10/16 09:14:34
 #
 # --table-start--
 dataClass=com.mx.cosmo.orm.vo.SaintInfo
@@ -23,6 +23,12 @@ fieldName=type
 # --field-end--
 # --field-start--
 fieldName=lane
+# --field-end--
+# --field-start--
+fieldName=cloth
+# --field-end--
+# --field-start--
+fieldName=description
 # --field-end--
 # --field-start--
 fieldName=activeTime
@@ -74,6 +80,30 @@ columnName=phys_attack
 # --field-start--
 fieldName=furyAttack
 columnName=fury_attack
+# --field-end--
+# --field-start--
+fieldName=physDefense
+columnName=phys_defense
+# --field-end--
+# --field-start--
+fieldName=furyResistance
+columnName=fury_resistance
+# --field-end--
+# --field-start--
+fieldName=accuracy
+columnName=accuracy
+# --field-end--
+# --field-start--
+fieldName=evasion
+columnName=evasion
+# --field-end--
+# --field-start--
+fieldName=recoveryHP
+columnName=hp_recovery
+# --field-end--
+# --field-start--
+fieldName=recoveryCosmo
+columnName=cosmo_recovery
 # --field-end--
 # --table-fields-end--
 # --table-end--

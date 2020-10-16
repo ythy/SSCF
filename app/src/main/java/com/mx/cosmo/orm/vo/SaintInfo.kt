@@ -28,6 +28,15 @@ class SaintInfo() : Parcelable {
         const val COLUMN_PHYS_ATTACK = "phys_attack"
         const val COLUMN_FURY_ATTACK = "fury_attack"
 
+        const val COLUMN_PHYS_DEFENSE = "phys_defense"
+        const val COLUMN_FURY_RESISTANCE = "fury_resistance"
+        const val COLUMN_ACCURACY = "accuracy"
+        const val COLUMN_EVASION = "evasion"
+        const val COLUMN_HP_RECOVERY = "hp_recovery"
+        const val COLUMN_COSMO_RECOVERY = "cosmo_recovery"
+        const val COLUMN_DESCRIPTION = "description"
+        const val COLUMN_CLOTH = "cloth"
+
         @JvmField
         val CREATOR = object : Parcelable.Creator<SaintInfo> {
             override fun createFromParcel(parcel: Parcel): SaintInfo {
@@ -54,6 +63,12 @@ class SaintInfo() : Parcelable {
 
     @DatabaseField
     var lane:String = ""
+
+    @DatabaseField
+    var cloth:String = ""
+
+    @DatabaseField
+    var description:String = ""
 
     @DatabaseField(columnName = COLUMN_ACTIVE_TIME)
     var activeTime:String = ""
@@ -97,6 +112,24 @@ class SaintInfo() : Parcelable {
     @DatabaseField(columnName = COLUMN_FURY_ATTACK)
     var furyAttack:Int = 0
 
+    @DatabaseField(columnName = COLUMN_PHYS_DEFENSE)
+    var physDefense:Int = 0
+
+    @DatabaseField(columnName = COLUMN_FURY_RESISTANCE)
+    var furyResistance:Int = 0
+
+    @DatabaseField(columnName = COLUMN_ACCURACY)
+    var accuracy:Int = 0
+
+    @DatabaseField(columnName = COLUMN_EVASION)
+    var evasion:Int = 0
+
+    @DatabaseField(columnName = COLUMN_HP_RECOVERY)
+    var recoveryHP:Int = 0
+
+    @DatabaseField(columnName = COLUMN_COSMO_RECOVERY)
+    var recoveryCosmo:Int = 0
+
     constructor(parcel: Parcel) : this() {
         id = parcel.readInt()
         name = parcel.readString()
@@ -117,6 +150,15 @@ class SaintInfo() : Parcelable {
         hp = parcel.readInt()
         physAttack = parcel.readInt()
         furyAttack = parcel.readInt()
+
+        physDefense = parcel.readInt()
+        furyResistance = parcel.readInt()
+        accuracy = parcel.readInt()
+        evasion = parcel.readInt()
+        recoveryHP = parcel.readInt()
+        recoveryCosmo = parcel.readInt()
+        cloth = parcel.readString()
+        description = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -139,6 +181,15 @@ class SaintInfo() : Parcelable {
         parcel.writeInt(hp)
         parcel.writeInt(physAttack)
         parcel.writeInt(furyAttack)
+
+        parcel.writeInt(physDefense)
+        parcel.writeInt(furyResistance)
+        parcel.writeInt(accuracy)
+        parcel.writeInt(evasion)
+        parcel.writeInt(recoveryHP)
+        parcel.writeInt(recoveryCosmo)
+        parcel.writeString(cloth)
+        parcel.writeString(description)
     }
 
     override fun describeContents(): Int {
