@@ -117,7 +117,7 @@ class MainActivity: BaseActivity() {
         val result = mDbHelper.getSaintInfoDao().querySaintList(mOrderBy, mOderAsc)
         if(result.isEmpty()){
             Thread(Runnable {
-                val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data.json")
+                val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data_20201007.json")
                 saintData.forEach {
                     mDbHelper.getSaintInfoDao().createOrUpdateSaint(it)
                 }
@@ -198,7 +198,7 @@ class MainActivity: BaseActivity() {
             }
             R.id.action_update_saint -> {
                 Thread(Runnable {
-                    val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data.json")
+                    val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data_20201007.json")
                     saintData.forEach {
                         mDbHelper.getSaintInfoDao().createOrUpdateSaint(it)
                     }

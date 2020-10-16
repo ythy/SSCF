@@ -12,7 +12,7 @@ import com.mx.cosmo.orm.vo.*
 class DatabaseConfigUtil{
 
     companion object {
-        private val classes = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java)
+        private val classes = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java, ImageInfo::class.java)
 
         @JvmStatic
         fun main(args: Array<String>) {

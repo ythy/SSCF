@@ -14,6 +14,7 @@ class SkillsInfo {
         const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_EFFECTS = "effects"
         const val COLUMN_IMAGE = "image"
+        const val COLUMN_IMAGE_ID = "image_id"
     }
 
     @DatabaseField(generatedId = true, allowGeneratedIdInsert = true, columnName = ID)
@@ -36,5 +37,8 @@ class SkillsInfo {
 
     @DatabaseField(dataType = DataType.BYTE_ARRAY)
     var image:ByteArray = byteArrayOf()
+
+    @DatabaseField(columnName = COLUMN_IMAGE_ID)
+    var imageId:Int = 0
 
 }

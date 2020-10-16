@@ -9,6 +9,8 @@ class SaintInfo() : Parcelable {
     companion object{
         const val TABLE_NAME = "saintinfo"
         const val ID = "_id"
+        const val COLUMN_IMAGE_SMALL_ID = "image_small_id"
+        const val COLUMN_IMAGE_FULL_ID = "image_full_id"
         const val COLUMN_NAME = "name"
         const val COLUMN_UNIT_ID = "unit_id"
         const val COLUMN_TYPE = "type"
@@ -130,8 +132,17 @@ class SaintInfo() : Parcelable {
     @DatabaseField(columnName = COLUMN_COSMO_RECOVERY)
     var recoveryCosmo:Int = 0
 
+    @DatabaseField(columnName = COLUMN_IMAGE_SMALL_ID)
+    var imageSmallId:Int = 0
+
+    @DatabaseField(columnName = COLUMN_IMAGE_FULL_ID)
+    var imageFullId:Int = 0
+
+
     constructor(parcel: Parcel) : this() {
         id = parcel.readInt()
+        imageSmallId = parcel.readInt()
+        imageFullId = parcel.readInt()
         name = parcel.readString()
         unitId = parcel.readInt()
         type = parcel.readString()
@@ -163,6 +174,8 @@ class SaintInfo() : Parcelable {
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
+        parcel.writeInt(imageSmallId)
+        parcel.writeInt(imageFullId)
         parcel.writeString(name)
         parcel.writeInt(unitId)
         parcel.writeString(type)

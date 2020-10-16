@@ -9,7 +9,9 @@ import com.j256.ormlite.table.TableUtils
 import com.mx.cosmo.orm.vo.SaintInfo
 import com.mx.cosmo.R
 import com.mx.cosmo.orm.imp.SaintInfoDaoImp
+import com.mx.cosmo.orm.imp.ImageInfoDaoImp
 import com.mx.cosmo.orm.imp.SkillsInfoDaoImp
+import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SkillsInfo
 import java.sql.SQLException
 
@@ -66,6 +68,15 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_CLOTH + " VARCHAR ; ")
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_DESCRIPTION + " VARCHAR ; ")
         }
+        if(oldVersion <= 5){
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_IMAGE_SMALL_ID + " INTEGER ; ")
+            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_IMAGE_FULL_ID + " INTEGER ; ")
+            getSkillsInfoDao().executeRaw("ALTER TABLE " + SkillsInfo.TABLE_NAME + " ADD COLUMN  " + SkillsInfo.COLUMN_IMAGE_ID + " INTEGER ; ")
+            getImageInfoDao().executeRaw(" CREATE TABLE " + ImageInfo.TABLE_NAME + " ( "
+                    + ImageInfo.ID + " INTEGER PRIMARY KEY , "
+                    + SkillsInfo.COLUMN_IMAGE + " BLOB )")
+        }
+
     }
 
     fun getSaintInfoDao(): SaintInfoDaoImp {
@@ -76,12 +87,16 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         return SkillsInfoDaoImp(this)
     }
 
+    fun getImageInfoDao(): ImageInfoDaoImp {
+        return ImageInfoDaoImp(this)
+    }
+
     companion object {
         // name of the database file for your application
         private const val DATABASE_NAME = "cosmo.db"
         // any time you make changes to your database objects, you may have to increase the database version
-        private const val DATABASE_VERSION = 5
-        private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java)
+        private const val DATABASE_VERSION = 6
+        private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java, ImageInfo::class.java)
     }
 
 

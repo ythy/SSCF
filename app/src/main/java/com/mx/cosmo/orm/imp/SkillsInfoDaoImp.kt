@@ -5,8 +5,6 @@ import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.RuntimeExceptionDao
 import com.j256.ormlite.field.DataType
 import com.j256.ormlite.stmt.Where
-import com.mx.cosmo.orm.vo.SaintInfo
-
 import com.mx.cosmo.orm.vo.SkillsInfo
 
 class SkillsInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExceptionDao<SkillsInfo, Int>(getDao(orm)) {
@@ -30,6 +28,7 @@ class SkillsInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcept
             this.create(skills)
         }
     }
+
     fun querySkills(info: SkillsInfo, orderBy:String = SkillsInfo.ID, isAsc:Boolean = false):List<SkillsInfo>{
         val qb = this.queryBuilder()
         qb.orderBy(orderBy, isAsc)
