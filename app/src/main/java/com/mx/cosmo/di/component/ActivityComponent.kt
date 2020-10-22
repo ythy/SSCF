@@ -9,7 +9,7 @@ import dagger.Component
  * Created by maoxin on 2018/9/28.
  */
 @ActivityScope
-@Component(dependencies = arrayOf(AppComponent::class), modules = arrayOf(ActivityModule::class))
+@Component(dependencies = [AppComponent::class], modules = [ActivityModule::class])
 interface ActivityComponent {
     fun injectActivity(activity:BaseActivity)
 }

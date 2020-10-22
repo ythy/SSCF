@@ -1,9 +1,7 @@
 package com.mx.cosmo.adapter
 
 import android.content.Context
-import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,15 +11,13 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.mx.cosmo.R
-import com.mx.cosmo.common.Setting
 import com.mx.cosmo.orm.vo.SaintInfo
-import java.io.File
 
-class MainAdapter(val context: Context, var datalist:List<SaintInfo>): BaseAdapter() {
+class MainAdapter(val context: Context, private var datalist:List<SaintInfo>): BaseAdapter() {
 
 
     override fun getItem(position: Int): Any {
-        return datalist.get(position)
+        return datalist[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -32,41 +28,28 @@ class MainAdapter(val context: Context, var datalist:List<SaintInfo>): BaseAdapt
         return datalist.size
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        var component: Component
-        var convertView = convertView
+    override fun getView(position: Int, viewParam: View?, parent: ViewGroup?): View {
+        val component: Component
+        var convertView = viewParam
 
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(
-                R.layout.adapter_main_list, null)
+                R.layout.adapter_main_list, parent, false)
             component = Component(convertView)
             convertView?.tag = component
         } else
             component = convertView.tag as Component
 
         try {
-            val imageDir = File(Environment.getExternalStorageDirectory(), Setting.RESOURCES_FILE_PATH_SMALL)
-            val file = File(imageDir.path,  "${datalist[position].unitId}_0.png")
-            if (file.exists()) {
-                val bmp = MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.fromFile(file))
-                component.header.setImageBitmap(bmp)
-            } else
+            if(datalist[position].imageSmall != null)
+                component.header.setImageBitmap(BitmapFactory.decodeByteArray(datalist[position].imageSmall, 0, datalist[position].imageSmall!!.size))
+            else
                 component.header.setImageBitmap(null)
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
         component.name.text = datalist[position].name
-//        component.type.text = when {
-//            datalist[position].type == "Vitality" -> "Vit."
-//            datalist[position].type == "Technique" -> "Tec."
-//            else -> datalist[position].type
-//        }
-//        component.lane.text = when {
-//            datalist[position].lane == "Front" -> "Front"
-//            datalist[position].lane == "Middle" -> "Mid."
-//            else -> datalist[position].lane
-//        }
         component.vit.text =  datalist[position].vitalityRate.toString()
         component.aura.text =  datalist[position].auraRate.toString()
         component.tech.text =  datalist[position].techRate.toString()
@@ -75,7 +58,7 @@ class MainAdapter(val context: Context, var datalist:List<SaintInfo>): BaseAdapt
         return convertView!!
     }
 
-    class Component{
+    class Component(view: View) {
 
         @BindView(R.id.ivHeader)
         lateinit var header: ImageView
@@ -98,7 +81,7 @@ class MainAdapter(val context: Context, var datalist:List<SaintInfo>): BaseAdapt
         @BindView(R.id.tv_pve)
         lateinit var pve: TextView
 
-        constructor(view: View){
+        init {
             ButterKnife.bind(this, view)
         }
     }

@@ -32,7 +32,6 @@ class MainActivity: BaseActivity() {
         const val TAG = "MainActivity"
     }
 
-
     private val handler = MyHandler(this)
     private val mDataList:MutableList<SaintInfo> = mutableListOf()
     private var mOrderBy:String = SaintInfo.ID
@@ -45,7 +44,7 @@ class MainActivity: BaseActivity() {
     @OnItemClick(R.id.lv_main)
     fun onListItemClick(position: Int) {
         val intent = Intent(this, DetailActivity::class.java)
-        intent.putExtra("saint", mDataList[position])
+        intent.putExtra("saint_id", mDataList[position].id)
         startActivity(intent)
     }
 
@@ -77,7 +76,7 @@ class MainActivity: BaseActivity() {
         if (!hasPermission()) {
             requestPermissions(permissions, MY_PERMISSIONS_REQUEST)
         } else
-            initView()
+            searchList()
     }
 
     private fun hasPermission(): Boolean {
@@ -96,7 +95,7 @@ class MainActivity: BaseActivity() {
             MY_PERMISSIONS_REQUEST -> {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initView()
+                    searchList()
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -107,14 +106,19 @@ class MainActivity: BaseActivity() {
     }
 
     private fun searchList(){
-        val result = mDbHelper.getSaintInfoDao().querySaintList(mOrderBy, mOderAsc)
-        mDataList.clear()
-        mDataList.addAll(result)
-        listView.adapter = mAdapter
+        mProgressDialog.show()
+        Thread(Runnable {
+            val result:ArrayList<SaintInfo> = mDbHelper.getSaintInfoDao().querySaintList(mOrderBy, mOderAsc) as ArrayList<SaintInfo>
+            val message = Message.obtain()
+            message.what = 5
+            val bundle = Bundle()
+            bundle.putParcelableArrayList("result", result)
+            message.data = bundle
+            handler.sendMessage(message)
+        }).start()
     }
 
-    private fun initView(){
-        val result = mDbHelper.getSaintInfoDao().querySaintList(mOrderBy, mOderAsc)
+    private fun updateList(result:List<SaintInfo>){
         if(result.isEmpty()){
             Thread(Runnable {
                 val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data_20201007.json")
@@ -141,61 +145,6 @@ class MainActivity: BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             // action with ID action_refresh was selected
-            R.id.action_get_skills_images -> {
-                Thread(Runnable {
-                    mDataList.filter {
-                        Utils.getIdFromUnitId(it.unitId) > Setting.IMAGE_SKILL_LAST_COUNT
-                    }.forEach {
-                        val skillsList = mDbHelper.getSkillsInfoDao().queryForEq(
-                            SkillsInfo.COLUMN_SAINT_ID, Utils.getIdFromUnitId(it.unitId))
-                        skillsList.forEach { skill ->
-                            val url = URL(Setting.RESOURCES_REMOTE_URL + "${skill.unitId}_0.png")
-                            try {
-                                val bmp = FileUtils.loadRemoteImage(url)
-                                skill.image = FileUtils.getBitmapAsByteArray(bmp)
-                                mDbHelper.getSkillsInfoDao().createOrUpdateSkills(skill)
-                            }catch (e:IOException){
-                                Log.e(TAG, e.message)
-                            }
-                        }
-                    }
-                    handler.sendEmptyMessage(4)
-                }).start()
-            }
-            R.id.action_get_full_images -> {
-                Thread(Runnable {
-                    mDataList.filter {
-                        Utils.getIdFromUnitId(it.unitId) > Setting.IMAGE_FULL_LAST_COUNT
-                    }.forEach {
-                        val url = URL(Setting.RESOURCES_REMOTE_URL + "${it.unitId}.png")
-                        try {
-                            val bmp = FileUtils.loadRemoteImage(url)
-                            val file = FileUtils.createFile( Setting.RESOURCES_FILE_PATH_FULL, "${it.unitId}.png")
-                            FileUtils.exportImgFromBitmap(bmp, file)
-                        }catch (e:IOException){
-                            Log.e(TAG, e.message)
-                        }
-                    }
-                    handler.sendEmptyMessage(3)
-                }).start()
-            }
-            R.id.action_get_images -> {
-                Thread(Runnable {
-                    mDataList.filter {
-                        Utils.getIdFromUnitId(it.unitId) > Setting.IMAGE_SMALL_LAST_COUNT
-                    }.forEach {
-                        val url = URL(Setting.RESOURCES_REMOTE_URL + "${it.unitId}_0.png")
-                        try {
-                            val bmp = FileUtils.loadRemoteImage(url)
-                            val file = FileUtils.createFile( Setting.RESOURCES_FILE_PATH_SMALL, "${it.unitId}_0.png")
-                            FileUtils.exportImgFromBitmap(bmp, file)
-                        }catch (e:IOException){
-                            Log.e(TAG, e.message)
-                        }
-                    }
-                    handler.sendEmptyMessage(2)
-                }).start()
-            }
             R.id.action_update_saint -> {
                 Thread(Runnable {
                     val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data_20201007.json")
@@ -224,14 +173,13 @@ class MainActivity: BaseActivity() {
             when {
                 msg.what == 1 -> {
                     Toast.makeText(activity, "get record done", Toast.LENGTH_LONG).show()
-                    activity.initView()
-                }
-                msg.what == 2 -> {
-                    Toast.makeText(activity, "get small images done", Toast.LENGTH_LONG).show()
                     activity.searchList()
                 }
-                msg.what == 3 -> Toast.makeText(activity, "get full images done", Toast.LENGTH_LONG).show()
-                msg.what == 4 -> Toast.makeText(activity, "get skills images done", Toast.LENGTH_LONG).show()
+                msg.what == 5 -> { //search result
+                    activity.mProgressDialog.dismiss()
+                    val result:ArrayList<SaintInfo> = msg.data.getParcelableArrayList<SaintInfo>("result") as ArrayList<SaintInfo>
+                    activity.updateList(result)
+                }
             }
         }
     }

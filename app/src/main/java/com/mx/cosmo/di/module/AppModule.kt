@@ -10,7 +10,8 @@ import dagger.Provides
  * Created by maoxin on 2017/2/20.
  */
 
-@Module(includes = arrayOf(DBModule::class))
+@Suppress("unused")
+@Module(includes = [DBModule::class])
 class AppModule(private val context: Context) {
 
     @Provides

@@ -1,10 +1,9 @@
 package com.mx.cosmo.activity
 
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -19,20 +19,49 @@ import com.mx.cosmo.R
 import com.mx.cosmo.common.FileUtils
 import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
+import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
 import com.mx.cosmo.orm.vo.SkillsInfo
-import java.io.File
 import java.io.IOException
+import java.lang.ref.WeakReference
 import java.net.URL
 
 class DetailActivity: BaseActivity() {
+
+    companion object{
+        const val TAG = "DetailActivity"
+    }
+
+    private val mHandler = MyHandler(this)
+    private lateinit var mSaintInfo:SaintInfo
 
     @BindView(R.id.ll_skills)
     lateinit var mSkillsBox:LinearLayout
 
     @OnClick(R.id.btn_update)
     fun onBtnUpdateClickHandler(){
+        mProgressDialog.show()
         Thread(Runnable {
+            val urlFull = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}.png")
+            try {
+                val bmp = FileUtils.loadRemoteImage(urlFull)
+                val imageInfo = mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
+                mSaintInfo.imageFullId = imageInfo.id
+            }catch (e:IOException){
+                Log.e(TAG, e.message)
+            }
+
+            val urlSmall = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}_0.png")
+            try {
+                val bmp = FileUtils.loadRemoteImage(urlSmall)
+                val imageInfo = mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
+                mSaintInfo.imageSmallId = imageInfo.id
+            }catch (e:IOException){
+                Log.e(TAG, e.message)
+            }
+
+             mDbHelper.getSaintInfoDao().update(mSaintInfo)
+
             val skillsList = mDbHelper.getSkillsInfoDao().queryForEq(
                 SkillsInfo.COLUMN_SAINT_ID, Utils.getIdFromUnitId(mSaintInfo.unitId))
             skillsList.forEach { skill ->
@@ -45,16 +74,18 @@ class DetailActivity: BaseActivity() {
                     Log.e(MainActivity.TAG, e.message)
                 }
             }
+            mHandler.sendEmptyMessage(1)
         }).start()
     }
 
-    private lateinit var mSaintInfo:SaintInfo
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-        this.mSaintInfo = intent.getParcelableExtra("saint")
+        val id = intent.getIntExtra("saint_id", 0)
+        this.mSaintInfo = mDbHelper.getSaintInfoById(id)
         ButterKnife.bind(this)
         this.setBaseView()
         this.setSkill()
@@ -87,13 +118,9 @@ class DetailActivity: BaseActivity() {
         component.evasion.text = mSaintInfo.evasion.toString()
         component.hpRecovery.text = mSaintInfo.recoveryHP.toString()
         component.cosmoRecovery.text = mSaintInfo.recoveryCosmo.toString()
-
-        val imageDir = File(Environment.getExternalStorageDirectory(), Setting.RESOURCES_FILE_PATH_FULL)
-        val file = File(imageDir.path,  "${mSaintInfo.unitId}.png")
-        if (file.exists()) {
-            val bmp = MediaStore.Images.Media.getBitmap(this.contentResolver, Uri.fromFile(file))
-            component.image.setImageBitmap(bmp)
-        } else
+        if(mSaintInfo.imageFull != null)
+            component.image.setImageBitmap(BitmapFactory.decodeByteArray(mSaintInfo.imageFull, 0, mSaintInfo.imageFull!!.size))
+        else
             component.image.setImageBitmap(null)
     }
 
@@ -107,10 +134,26 @@ class DetailActivity: BaseActivity() {
             val skills = Skills(child)
             skills.name.text = it.name
             skills.description.text = it.description
-            if(it.image?.size > 0)
+            if(it.image.isNotEmpty())
                 skills.images.setImageBitmap(BitmapFactory.decodeByteArray(it.image, 0, it.image.size))
         }
     }
+
+    class MyHandler constructor(activity:DetailActivity):Handler(){
+        private val weakReference:WeakReference<DetailActivity> = WeakReference(activity)
+
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            val activity = weakReference.get()!!
+            when {
+                msg.what == 1 -> {
+                    activity.mProgressDialog.dismiss()
+                    Toast.makeText(activity, "update done", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     class Skills constructor(view: View){
 

@@ -138,6 +138,9 @@ class SaintInfo() : Parcelable {
     @DatabaseField(columnName = COLUMN_IMAGE_FULL_ID)
     var imageFullId:Int = 0
 
+    var imageSmall:ByteArray? = byteArrayOf()
+    var imageFull:ByteArray? = byteArrayOf()
+
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readInt()
@@ -170,6 +173,9 @@ class SaintInfo() : Parcelable {
         recoveryCosmo = parcel.readInt()
         cloth = parcel.readString()
         description = parcel.readString()
+
+        parcel.readByteArray(imageSmall)
+        parcel.readByteArray(imageFull)
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -203,6 +209,9 @@ class SaintInfo() : Parcelable {
         parcel.writeInt(recoveryCosmo)
         parcel.writeString(cloth)
         parcel.writeString(description)
+
+        parcel.writeByteArray(imageSmall)
+        parcel.writeByteArray(imageFull)
     }
 
     override fun describeContents(): Int {

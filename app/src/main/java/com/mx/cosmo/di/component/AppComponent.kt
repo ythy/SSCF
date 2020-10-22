@@ -10,7 +10,7 @@ import dagger.Component
  * Created by maoxin on 2017/2/20.
  */
 @Singleton
-@Component(modules = arrayOf(AppModule::class))
+@Component(modules = [AppModule::class])
 interface AppComponent {
     fun dataBaseHelper(): DataBaseHelper
     fun getSharedPreferences(): SharedPreferences

@@ -1,6 +1,5 @@
 package com.mx.cosmo.orm.imp
 
-import android.util.Log
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.RuntimeExceptionDao
@@ -33,7 +32,6 @@ class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcepti
         query.orderBy(orderBy, isAsc)
         return this.query(query.prepare())
     }
-
 
 }
 

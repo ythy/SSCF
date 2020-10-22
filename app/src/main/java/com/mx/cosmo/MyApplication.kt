@@ -9,9 +9,6 @@ class MyApplication : Application() {
 
     lateinit var appComponent: AppComponent
 
-    //    val dbHelper: DataBaseHelper by lazy {
-//        DatabaseManager.getHelper(this, DataBaseHelper::class.java);
-//    }
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent.builder()

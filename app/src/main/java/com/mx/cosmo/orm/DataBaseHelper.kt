@@ -74,7 +74,7 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
             getSkillsInfoDao().executeRaw("ALTER TABLE " + SkillsInfo.TABLE_NAME + " ADD COLUMN  " + SkillsInfo.COLUMN_IMAGE_ID + " INTEGER ; ")
             getImageInfoDao().executeRaw(" CREATE TABLE " + ImageInfo.TABLE_NAME + " ( "
                     + ImageInfo.ID + " INTEGER PRIMARY KEY , "
-                    + SkillsInfo.COLUMN_IMAGE + " BLOB )")
+                    + ImageInfo.COLUMN_IMAGE + " BLOB )")
         }
 
     }
@@ -89,6 +89,13 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
 
     fun getImageInfoDao(): ImageInfoDaoImp {
         return ImageInfoDaoImp(this)
+    }
+
+    fun getSaintInfoById(id:Int):SaintInfo{
+        val saintInfo = getSaintInfoDao().queryForId(id)
+        saintInfo.imageSmall = getImageInfoDao().queryForId(saintInfo.imageSmallId)?.image
+        saintInfo.imageFull = getImageInfoDao().queryForId(saintInfo.imageFullId)?.image
+        return saintInfo
     }
 
     companion object {
