@@ -3,16 +3,19 @@ package com.mx.cosmo.orm.vo
 import android.os.Parcel
 import android.os.Parcelable
 import com.j256.ormlite.field.DatabaseField
+import com.j256.ormlite.table.DatabaseTable
 
+@Suppress("unused")
+@DatabaseTable(tableName = SaintInfo.TABLE_NAME)
 class SaintInfo() : Parcelable {
 
     companion object{
-        const val TABLE_NAME = "saintinfo"
+        const val TABLE_NAME = "saint_info"
         const val ID = "_id"
         const val COLUMN_IMAGE_SMALL_ID = "image_small_id"
         const val COLUMN_IMAGE_FULL_ID = "image_full_id"
         const val COLUMN_NAME = "name"
-        const val COLUMN_UNIT_ID = "unit_id"
+        const val COLUMN_UNIT_ID = "unit_id" // 10027701
         const val COLUMN_TYPE = "type"
         const val COLUMN_LANE = "lane"
         const val COLUMN_ACTIVE_TIME = "active_time"
@@ -38,6 +41,9 @@ class SaintInfo() : Parcelable {
         const val COLUMN_COSMO_RECOVERY = "cosmo_recovery"
         const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_CLOTH = "cloth"
+
+        const val COLUMN_IMAGE_SAMLL = "image_small"
+        const val COLUMN_IMAGE_FULL = "image_full"
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<SaintInfo> {
@@ -75,63 +81,6 @@ class SaintInfo() : Parcelable {
     @DatabaseField(columnName = COLUMN_ACTIVE_TIME)
     var activeTime:String = ""
 
-    @DatabaseField(columnName = COLUMN_TIERS_PVP)
-    var tiersPVP:String = ""
-
-    @DatabaseField(columnName = COLUMN_TIERS_CRUSADE)
-    var tiersCrusade:String = ""
-
-    @DatabaseField(columnName = COLUMN_TIERS_PVE)
-    var tiersPVE:String = ""
-
-    @DatabaseField
-    var power:Int = 0
-
-    @DatabaseField(columnName = COLUMN_RATE_VITALITY)
-    var vitalityRate: Double = 0.0
-
-    @DatabaseField(columnName = COLUMN_RATE_AURA)
-    var auraRate: Double = 0.0
-
-    @DatabaseField(columnName = COLUMN_RATE_TECH)
-    var techRate: Double = 0.0
-
-    @DatabaseField
-    var vitality:Int = 0
-
-    @DatabaseField
-    var aura:Int = 0
-
-    @DatabaseField
-    var technique:Int = 0
-
-    @DatabaseField
-    var hp:Int = 0
-
-    @DatabaseField(columnName = COLUMN_PHYS_ATTACK)
-    var physAttack:Int = 0
-
-    @DatabaseField(columnName = COLUMN_FURY_ATTACK)
-    var furyAttack:Int = 0
-
-    @DatabaseField(columnName = COLUMN_PHYS_DEFENSE)
-    var physDefense:Int = 0
-
-    @DatabaseField(columnName = COLUMN_FURY_RESISTANCE)
-    var furyResistance:Int = 0
-
-    @DatabaseField(columnName = COLUMN_ACCURACY)
-    var accuracy:Int = 0
-
-    @DatabaseField(columnName = COLUMN_EVASION)
-    var evasion:Int = 0
-
-    @DatabaseField(columnName = COLUMN_HP_RECOVERY)
-    var recoveryHP:Int = 0
-
-    @DatabaseField(columnName = COLUMN_COSMO_RECOVERY)
-    var recoveryCosmo:Int = 0
-
     @DatabaseField(columnName = COLUMN_IMAGE_SMALL_ID)
     var imageSmallId:Int = 0
 
@@ -139,40 +88,24 @@ class SaintInfo() : Parcelable {
     var imageFullId:Int = 0
 
     var imageSmall:ByteArray? = byteArrayOf()
+
     var imageFull:ByteArray? = byteArrayOf()
 
+    var detailInfo:SaintHistory = SaintHistory()
+
+    var detailTier:TierInfo = TierInfo()
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readInt()
         imageSmallId = parcel.readInt()
         imageFullId = parcel.readInt()
-        name = parcel.readString()
+        name = parcel.readString()!!
         unitId = parcel.readInt()
-        type = parcel.readString()
-        lane = parcel.readString()
-        activeTime = parcel.readString()
-        tiersPVP = parcel.readString()
-        tiersCrusade = parcel.readString()
-        tiersPVE = parcel.readString()
-        power = parcel.readInt()
-        vitalityRate = parcel.readDouble()
-        auraRate = parcel.readDouble()
-        techRate = parcel.readDouble()
-        vitality = parcel.readInt()
-        aura = parcel.readInt()
-        technique = parcel.readInt()
-        hp = parcel.readInt()
-        physAttack = parcel.readInt()
-        furyAttack = parcel.readInt()
-
-        physDefense = parcel.readInt()
-        furyResistance = parcel.readInt()
-        accuracy = parcel.readInt()
-        evasion = parcel.readInt()
-        recoveryHP = parcel.readInt()
-        recoveryCosmo = parcel.readInt()
-        cloth = parcel.readString()
-        description = parcel.readString()
+        type = parcel.readString()!!
+        lane = parcel.readString()!!
+        activeTime = parcel.readString()!!
+        cloth = parcel.readString()!!
+        description = parcel.readString()!!
 
         parcel.readByteArray(imageSmall)
         parcel.readByteArray(imageFull)
@@ -187,26 +120,6 @@ class SaintInfo() : Parcelable {
         parcel.writeString(type)
         parcel.writeString(lane)
         parcel.writeString(activeTime)
-        parcel.writeString(tiersPVP)
-        parcel.writeString(tiersCrusade)
-        parcel.writeString(tiersPVE)
-        parcel.writeInt(power)
-        parcel.writeDouble(vitalityRate)
-        parcel.writeDouble(auraRate)
-        parcel.writeDouble(techRate)
-        parcel.writeInt(vitality)
-        parcel.writeInt(aura)
-        parcel.writeInt(technique)
-        parcel.writeInt(hp)
-        parcel.writeInt(physAttack)
-        parcel.writeInt(furyAttack)
-
-        parcel.writeInt(physDefense)
-        parcel.writeInt(furyResistance)
-        parcel.writeInt(accuracy)
-        parcel.writeInt(evasion)
-        parcel.writeInt(recoveryHP)
-        parcel.writeInt(recoveryCosmo)
         parcel.writeString(cloth)
         parcel.writeString(description)
 

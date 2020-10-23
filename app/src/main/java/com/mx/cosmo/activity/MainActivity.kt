@@ -21,7 +21,9 @@ import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
 import com.mx.cosmo.orm.vo.SaintInfo
 import com.mx.cosmo.orm.vo.SkillsInfo
+import com.mx.cosmo.orm.vo.Version
 import java.io.IOException
+import java.lang.Exception
 import java.lang.ref.WeakReference
 import java.net.URL
 
@@ -35,7 +37,7 @@ class MainActivity: BaseActivity() {
     private val handler = MyHandler(this)
     private val mDataList:MutableList<SaintInfo> = mutableListOf()
     private var mOrderBy:String = SaintInfo.ID
-    private var mOderAsc:Boolean = true
+    private var mOderAsc:Boolean = false
     private val mAdapter = MainAdapter(this, mDataList)
 
     @BindView(R.id.lv_main)
@@ -108,11 +110,13 @@ class MainActivity: BaseActivity() {
     private fun searchList(){
         mProgressDialog.show()
         Thread(Runnable {
-            val result:ArrayList<SaintInfo> = mDbHelper.getSaintInfoDao().querySaintList(mOrderBy, mOderAsc) as ArrayList<SaintInfo>
+            val result:ArrayList<SaintInfo> = mDbHelper.getSaintInfoDao().getSaintList(mOrderBy, mOderAsc) as ArrayList<SaintInfo>
+            val version = mDbHelper.getVersionDao().getLastVersion()?.date
             val message = Message.obtain()
             message.what = 5
             val bundle = Bundle()
             bundle.putParcelableArrayList("result", result)
+            bundle.putString("version", version)
             message.data = bundle
             handler.sendMessage(message)
         }).start()
@@ -120,14 +124,22 @@ class MainActivity: BaseActivity() {
 
     private fun updateList(result:List<SaintInfo>){
         if(result.isEmpty()){
+            mProgressDialog.show()
             Thread(Runnable {
-                val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data_20201007.json")
+                val (saintData, skillsData) = Utils.loadJSONFromAsset(this, Setting.DEFAULT_DATA_FILE)
                 saintData.forEach {
-                    mDbHelper.getSaintInfoDao().createOrUpdateSaint(it)
+                    mDbHelper.getSaintInfoDao().create(it)
+                    mDbHelper.getSaintHistoryDao().create(it.detailInfo)
+                    mDbHelper.getTierInfoDao().create(it.detailTier)
                 }
                 skillsData.forEach {
-                    mDbHelper.getSkillsInfoDao().createOrUpdateSkills(it)
+                    mDbHelper.getSkillsInfoDao().create(it)
                 }
+                val version = Version()
+                version.date = Setting.DEFAULT_DATA_DATE
+                version.version = Setting.DEFAULT_DATA_VERSION
+                mDbHelper.getVersionDao().create(version)
+
                 handler.sendEmptyMessage(1)
             }).start()
         }else{
@@ -145,16 +157,60 @@ class MainActivity: BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             // action with ID action_refresh was selected
-            R.id.action_update_saint -> {
+            R.id.action_get_last_version_data -> {
+                mProgressDialog.show()
                 Thread(Runnable {
-                    val (saintData, skillsData) = Utils.loadJSONFromAsset(this, "seiya_data_20201007.json")
-                    saintData.forEach {
-                        mDbHelper.getSaintInfoDao().createOrUpdateSaint(it)
+                    val oldVersion = mDbHelper.getVersionDao().getLastVersion()?.date ?: ""
+                    val msg = Message.obtain()
+                    try {
+                        val jsonObject = Utils.loadRemoteJsonData(Setting.VERSION_REMOTE_URL)
+                        val newVersion = jsonObject.getString("date")
+                        val newVersionNumber = jsonObject.getString("version")
+                        if(newVersion > oldVersion){
+                            val json = Utils.loadRemoteJsonData(Setting.SAINT_REMOTE_URL)
+                            val (saintData, skillsData) = Utils.parseJsonData(json, newVersion)
+                            saintData.forEach {
+                                mDbHelper.getSaintInfoDao().createNewSaint(it)
+                                mDbHelper.getSaintHistoryDao().createSaintDetail(it.detailInfo)
+                                mDbHelper.getTierInfoDao().createTier(it.detailTier)
+                            }
+                            skillsData.forEach {
+                                mDbHelper.getSkillsInfoDao().createNewSkills(it)
+                            }
+                            val version = Version()
+                            version.date = newVersion
+                            version.version = newVersionNumber
+                            mDbHelper.getVersionDao().create(version)
+                            msg.what = 3
+                            msg.obj = "更新完成"
+                        }else{
+                            msg.what = 2
+                            msg.obj = "没有最新版本"
+                        }
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                        msg.what = 2
+                        msg.obj = e.message
+                    }finally {
+                        handler.sendMessage(msg)
                     }
-                    skillsData.forEach {
-                        mDbHelper.getSkillsInfoDao().createOrUpdateSkills(it)
+                }).start()
+            }
+            R.id.action_get_last_version -> {
+                mProgressDialog.show()
+                Thread(Runnable {
+                    val msg = Message.obtain()
+                    msg.what = 6
+                    try {
+                        val jsonObject = Utils.loadRemoteJsonData(Setting.VERSION_REMOTE_URL)
+                        val version = jsonObject.getString("date")
+                        msg.obj = version
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                        msg.obj = e.message
+                    }finally {
+                        handler.sendMessage(msg)
                     }
-                    handler.sendEmptyMessage(1)
                 }).start()
             }
             else -> {
@@ -171,14 +227,29 @@ class MainActivity: BaseActivity() {
         override fun handleMessage(msg: Message) {
             val activity = outer.get()!!
             when {
-                msg.what == 1 -> {
+                msg.what == 1 -> { //程序初始化
+                    activity.mProgressDialog.dismiss()
                     Toast.makeText(activity, "get record done", Toast.LENGTH_LONG).show()
+                    activity.searchList()
+                }
+                msg.what == 2 -> { //更新数据失败
+                    activity.mProgressDialog.dismiss()
+                    Toast.makeText(activity, msg.obj.toString(), Toast.LENGTH_LONG).show()
+                }
+                msg.what == 3 -> { //更新数据成功
+                    activity.mProgressDialog.dismiss()
+                    Toast.makeText(activity, msg.obj.toString(), Toast.LENGTH_LONG).show()
                     activity.searchList()
                 }
                 msg.what == 5 -> { //search result
                     activity.mProgressDialog.dismiss()
                     val result:ArrayList<SaintInfo> = msg.data.getParcelableArrayList<SaintInfo>("result") as ArrayList<SaintInfo>
+                    activity.supportActionBar!!.title = "SSCF  " + ( msg.data.getString("version") ?: "" )
                     activity.updateList(result)
+                }
+                msg.what == 6 -> { //查最新版本
+                    activity.mProgressDialog.dismiss()
+                    Toast.makeText(activity, msg.obj.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }

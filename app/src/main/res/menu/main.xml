@@ -1,16 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/action_get_images"
+        android:id="@+id/action_get_last_version"
         android:orderInCategory="110"
-        android:title="获取图片"/>
+        android:title="获取最新版本号"/>
     <item
-        android:id="@+id/action_get_full_images"
+        android:id="@+id/action_get_last_version_data"
         android:orderInCategory="120"
-        android:title="获取大图片"/>
-    <item
-        android:id="@+id/action_get_skills_images"
-        android:orderInCategory="130"
-        android:title="获取技能图片"/>
+        android:title="获取最新数据"/>
     <item
         android:id="@+id/action_update_saint"
         android:orderInCategory="140"

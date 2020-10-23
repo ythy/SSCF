@@ -1,9 +1,9 @@
 #
-# generated on 2020/10/16 05:01:18
+# generated on 2020/10/23 10:41:28
 #
 # --table-start--
 dataClass=com.mx.cosmo.orm.vo.SaintInfo
-tableName=saintinfo
+tableName=saint_info
 # --table-fields-start--
 # --field-start--
 fieldName=id
@@ -35,16 +35,104 @@ fieldName=activeTime
 columnName=active_time
 # --field-end--
 # --field-start--
-fieldName=tiersPVP
-columnName=tiers_PVP
+fieldName=imageSmallId
+columnName=image_small_id
 # --field-end--
 # --field-start--
-fieldName=tiersCrusade
-columnName=tiers_crusade
+fieldName=imageFullId
+columnName=image_full_id
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.mx.cosmo.orm.vo.SkillsInfo
+tableName=skill_info
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=_id
+generatedId=true
+allowGeneratedIdInsert=true
 # --field-end--
 # --field-start--
-fieldName=tiersPVE
-columnName=tiers_PVE
+fieldName=saintId
+columnName=saint_id
+# --field-end--
+# --field-start--
+fieldName=unitId
+columnName=unit_id
+# --field-end--
+# --field-start--
+fieldName=name
+# --field-end--
+# --field-start--
+fieldName=description
+# --field-end--
+# --field-start--
+fieldName=effects
+# --field-end--
+# --field-start--
+fieldName=imageId
+columnName=image_id
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.mx.cosmo.orm.vo.ImageInfo
+tableName=image_info
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=_id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=image
+columnName=image
+dataPersister=BYTE_ARRAY
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.mx.cosmo.orm.vo.Version
+tableName=version_info
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=_id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=version
+# --field-end--
+# --field-start--
+fieldName=date
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.mx.cosmo.orm.vo.SaintHistory
+tableName=saint_history
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=_id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=saintId
+columnName=saint_id
+# --field-end--
+# --field-start--
+fieldName=version
+columnName=version
 # --field-end--
 # --field-start--
 fieldName=power
@@ -105,20 +193,12 @@ columnName=hp_recovery
 fieldName=recoveryCosmo
 columnName=cosmo_recovery
 # --field-end--
-# --field-start--
-fieldName=imageSmallId
-columnName=image_small_id
-# --field-end--
-# --field-start--
-fieldName=imageFullId
-columnName=image_full_id
-# --field-end--
 # --table-fields-end--
 # --table-end--
 #################################
 # --table-start--
-dataClass=com.mx.cosmo.orm.vo.SkillsInfo
-tableName=skillsinfo
+dataClass=com.mx.cosmo.orm.vo.TierInfo
+tableName=tier_info
 # --table-fields-start--
 # --field-start--
 fieldName=id
@@ -131,43 +211,20 @@ fieldName=saintId
 columnName=saint_id
 # --field-end--
 # --field-start--
-fieldName=unitId
-columnName=unit_id
+fieldName=version
+columnName=version
 # --field-end--
 # --field-start--
-fieldName=name
+fieldName=tiersPVP
+columnName=tiers_PVP
 # --field-end--
 # --field-start--
-fieldName=description
+fieldName=tiersCrusade
+columnName=tiers_crusade
 # --field-end--
 # --field-start--
-fieldName=effects
-# --field-end--
-# --field-start--
-fieldName=image
-dataPersister=BYTE_ARRAY
-# --field-end--
-# --field-start--
-fieldName=imageId
-columnName=image_id
-# --field-end--
-# --table-fields-end--
-# --table-end--
-#################################
-# --table-start--
-dataClass=com.mx.cosmo.orm.vo.ImageInfo
-tableName=imageinfo
-# --table-fields-start--
-# --field-start--
-fieldName=id
-columnName=_id
-generatedId=true
-allowGeneratedIdInsert=true
-# --field-end--
-# --field-start--
-fieldName=image
-columnName=skills_image
-dataPersister=BYTE_ARRAY
+fieldName=tiersPVE
+columnName=tiers_PVE
 # --field-end--
 # --table-fields-end--
 # --table-end--

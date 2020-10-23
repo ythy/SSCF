@@ -38,4 +38,5 @@ dependencies {
     implementation "com.j256.ormlite:ormlite-android:$ormlite_version"
     implementation "com.j256.ormlite:ormlite-core:$ormlite_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation group: 'org.codehaus.jackson', name: 'jackson-core-asl', version: '1.9.13'
 }

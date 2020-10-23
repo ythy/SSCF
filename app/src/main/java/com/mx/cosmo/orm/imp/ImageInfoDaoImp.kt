@@ -19,24 +19,4 @@ class ImageInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcepti
         }
     }
 
-    fun queryImage(id:Int):ImageInfo{
-        val qb = this.queryBuilder()
-        qb.selectRaw(
-            ImageInfo.ID + ", " + ImageInfo.COLUMN_IMAGE )
-        val where: Where<ImageInfo, Int> = qb.where()
-        where.eq(ImageInfo.ID, id)
-
-        val rawResults = this.queryRaw(
-            qb.prepareStatementString(),
-            arrayOf(DataType.INTEGER, DataType.BYTE_ARRAY))
-
-        val skillsImage = ImageInfo()
-        for (resultArray in rawResults) {
-            skillsImage.id = resultArray[0] as Int
-            skillsImage.image = resultArray[1] as ByteArray
-        }
-        return skillsImage
-    }
-
-
 }

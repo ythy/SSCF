@@ -21,7 +21,6 @@ import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
 import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
-import com.mx.cosmo.orm.vo.SkillsInfo
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.net.URL
@@ -33,6 +32,7 @@ class DetailActivity: BaseActivity() {
     }
 
     private val mHandler = MyHandler(this)
+    private lateinit var mRootView:RootView
     private lateinit var mSaintInfo:SaintInfo
 
     @BindView(R.id.ll_skills)
@@ -42,34 +42,42 @@ class DetailActivity: BaseActivity() {
     fun onBtnUpdateClickHandler(){
         mProgressDialog.show()
         Thread(Runnable {
-            val urlFull = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}.png")
-            try {
-                val bmp = FileUtils.loadRemoteImage(urlFull)
-                val imageInfo = mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
-                mSaintInfo.imageFullId = imageInfo.id
-            }catch (e:IOException){
-                Log.e(TAG, e.message)
-            }
+            if( mSaintInfo.imageFullId <= 0) {
+                val urlFull = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}.png")
+                try {
+                    val bmp = FileUtils.loadRemoteImage(urlFull)
+                    mSaintInfo.imageFull = FileUtils.getBitmapAsByteArray(bmp)
+                    val imageInfo = mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(mSaintInfo.imageFull!!))
+                    mSaintInfo.imageFullId = imageInfo.id
 
-            val urlSmall = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}_0.png")
-            try {
-                val bmp = FileUtils.loadRemoteImage(urlSmall)
-                val imageInfo = mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
-                mSaintInfo.imageSmallId = imageInfo.id
-            }catch (e:IOException){
-                Log.e(TAG, e.message)
+                } catch (e: IOException) {
+                    Log.e(TAG, e.message)
+                }
             }
-
+            if( mSaintInfo.imageSmallId <= 0) {
+                val urlSmall = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}_0.png")
+                try {
+                    val bmp = FileUtils.loadRemoteImage(urlSmall)
+                    val imageInfo =
+                        mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
+                    mSaintInfo.imageSmallId = imageInfo.id
+                } catch (e: IOException) {
+                    Log.e(TAG, e.message)
+                }
+            }
              mDbHelper.getSaintInfoDao().update(mSaintInfo)
 
-            val skillsList = mDbHelper.getSkillsInfoDao().queryForEq(
-                SkillsInfo.COLUMN_SAINT_ID, Utils.getIdFromUnitId(mSaintInfo.unitId))
+            val skillsList = mDbHelper.getSkillsInfoDao().querySkills(Utils.getIdFromUnitId(mSaintInfo.unitId))
             skillsList.forEach { skill ->
                 val url = URL(Setting.RESOURCES_REMOTE_URL + "${skill.unitId}_0.png")
                 try {
-                    val bmp = FileUtils.loadRemoteImage(url)
-                    skill.image = FileUtils.getBitmapAsByteArray(bmp)
-                    mDbHelper.getSkillsInfoDao().createOrUpdateSkills(skill)
+                    if(skill.imageId <= 0) {
+                        val bmp = FileUtils.loadRemoteImage(url)
+                        val imageInfo = mDbHelper.getImageInfoDao()
+                            .createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
+                        skill.imageId = imageInfo.id
+                        mDbHelper.getSkillsInfoDao().update(skill)
+                    }
                 }catch (e:IOException){
                     Log.e(MainActivity.TAG, e.message)
                 }
@@ -79,7 +87,6 @@ class DetailActivity: BaseActivity() {
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -87,46 +94,51 @@ class DetailActivity: BaseActivity() {
         val id = intent.getIntExtra("saint_id", 0)
         this.mSaintInfo = mDbHelper.getSaintInfoById(id)
         ButterKnife.bind(this)
+        this.mRootView = RootView(window.decorView.rootView)
         this.setBaseView()
-        this.setSkill()
     }
 
     private fun setBaseView(){
-        val component = MainUI(window.decorView.rootView)
-        component.name.text = mSaintInfo.name
-        component.cloth.text = mSaintInfo.cloth
-        component.time.text = mSaintInfo.activeTime
-        component.description.text = mSaintInfo.description
-        component.type.text = mSaintInfo.type
-        component.lane.text = mSaintInfo.lane
-        component.power.text = mSaintInfo.power.toString()
-        component.tiers.text = String.format(resources.getString(R.string.saint_tiers), mSaintInfo.tiersPVP, mSaintInfo.tiersCrusade, mSaintInfo.tiersPVE )
-        component.id.text = mSaintInfo.unitId.toString()
-        component.rateVit.text = mSaintInfo.vitalityRate.toString()
-        component.rateAura.text = mSaintInfo.auraRate .toString()
-        component.rateTech.text = mSaintInfo.techRate.toString()
+        mRootView.name.text = mSaintInfo.name
+        mRootView.cloth.text = mSaintInfo.cloth
+        mRootView.time.text = mSaintInfo.activeTime
+        mRootView.description.text = mSaintInfo.description
+        mRootView.type.text = mSaintInfo.type
+        mRootView.lane.text = mSaintInfo.lane
+        mRootView.power.text = mSaintInfo.detailInfo.power.toString()
+        mRootView.tiers.text = String.format(resources.getString(R.string.saint_tiers), mSaintInfo.detailTier.tiersPVP, mSaintInfo.detailTier.tiersCrusade, mSaintInfo.detailTier.tiersPVE )
+        mRootView.id.text = mSaintInfo.unitId.toString()
+        mRootView.rateVit.text = mSaintInfo.detailInfo.vitalityRate.toString()
+        mRootView.rateAura.text = mSaintInfo.detailInfo.auraRate .toString()
+        mRootView.rateTech.text = mSaintInfo.detailInfo.techRate.toString()
 
-        component.vitality.text = mSaintInfo.vitality.toString()
-        component.aura.text = mSaintInfo.aura.toString()
-        component.tech.text = mSaintInfo.technique.toString()
-        component.hp.text = mSaintInfo.hp.toString()
-        component.physAttack.text = mSaintInfo.physAttack.toString()
-        component.furyAttack.text = mSaintInfo.furyAttack.toString()
-        component.physDefense.text = mSaintInfo.physDefense.toString()
-        component.furyResistance.text = mSaintInfo.furyResistance.toString()
-        component.accuracy.text = mSaintInfo.accuracy.toString()
-        component.evasion.text = mSaintInfo.evasion.toString()
-        component.hpRecovery.text = mSaintInfo.recoveryHP.toString()
-        component.cosmoRecovery.text = mSaintInfo.recoveryCosmo.toString()
+        mRootView.vitality.text = mSaintInfo.detailInfo.vitality.toString()
+        mRootView.aura.text = mSaintInfo.detailInfo.aura.toString()
+        mRootView.tech.text = mSaintInfo.detailInfo.technique.toString()
+        mRootView.hp.text = mSaintInfo.detailInfo.hp.toString()
+        mRootView.physAttack.text = mSaintInfo.detailInfo.physAttack.toString()
+        mRootView.furyAttack.text = mSaintInfo.detailInfo.furyAttack.toString()
+        mRootView.physDefense.text = mSaintInfo.detailInfo.physDefense.toString()
+        mRootView.furyResistance.text = mSaintInfo.detailInfo.furyResistance.toString()
+        mRootView.accuracy.text = mSaintInfo.detailInfo.accuracy.toString()
+        mRootView.evasion.text = mSaintInfo.detailInfo.evasion.toString()
+        mRootView.hpRecovery.text = mSaintInfo.detailInfo.recoveryHP.toString()
+        mRootView.cosmoRecovery.text = mSaintInfo.detailInfo.recoveryCosmo.toString()
+
+        setSkill()
+        setImages()
+    }
+
+    private fun setImages(){
         if(mSaintInfo.imageFull != null)
-            component.image.setImageBitmap(BitmapFactory.decodeByteArray(mSaintInfo.imageFull, 0, mSaintInfo.imageFull!!.size))
+            mRootView.image.setImageBitmap(BitmapFactory.decodeByteArray(mSaintInfo.imageFull, 0, mSaintInfo.imageFull!!.size))
         else
-            component.image.setImageBitmap(null)
+            mRootView.image.setImageBitmap(null)
     }
 
     private fun setSkill(){
-        val skillsList = mDbHelper.getSkillsInfoDao().queryForEq(SkillsInfo.COLUMN_SAINT_ID,
-             Utils.getIdFromUnitId(mSaintInfo.unitId))
+        mSkillsBox.removeAllViews()
+        val skillsList = mDbHelper.getSkillsInfoDao().querySkills(Utils.getIdFromUnitId(mSaintInfo.unitId))
         skillsList.forEach {
             val child = LayoutInflater.from(this@DetailActivity).inflate(
                 R.layout.layout_skills, mSkillsBox, false)
@@ -134,8 +146,8 @@ class DetailActivity: BaseActivity() {
             val skills = Skills(child)
             skills.name.text = it.name
             skills.description.text = it.description
-            if(it.image.isNotEmpty())
-                skills.images.setImageBitmap(BitmapFactory.decodeByteArray(it.image, 0, it.image.size))
+            if(it.image != null)
+                skills.images.setImageBitmap(BitmapFactory.decodeByteArray(it.image, 0, it.image!!.size))
         }
     }
 
@@ -148,6 +160,8 @@ class DetailActivity: BaseActivity() {
             when {
                 msg.what == 1 -> {
                     activity.mProgressDialog.dismiss()
+                    activity.setImages()
+                    activity.setSkill()
                     Toast.makeText(activity, "update done", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -172,7 +186,7 @@ class DetailActivity: BaseActivity() {
 
     }
 
-    class MainUI constructor(view: View){
+    class RootView constructor(view: View){
 
         @BindView(R.id.iv_detail)
         lateinit var image:ImageView

@@ -4,15 +4,12 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper
+import com.j256.ormlite.field.DataType
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.table.TableUtils
-import com.mx.cosmo.orm.vo.SaintInfo
 import com.mx.cosmo.R
-import com.mx.cosmo.orm.imp.SaintInfoDaoImp
-import com.mx.cosmo.orm.imp.ImageInfoDaoImp
-import com.mx.cosmo.orm.imp.SkillsInfoDaoImp
-import com.mx.cosmo.orm.vo.ImageInfo
-import com.mx.cosmo.orm.vo.SkillsInfo
+import com.mx.cosmo.orm.imp.*
+import com.mx.cosmo.orm.vo.*
 import java.sql.SQLException
 
 
@@ -91,19 +88,45 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         return ImageInfoDaoImp(this)
     }
 
+    fun getVersionDao(): VersionDaoImp {
+        return VersionDaoImp(this)
+    }
+
+    fun getTierInfoDao(): TierInfoDaoImp {
+        return TierInfoDaoImp(this)
+    }
+
+    fun getSaintHistoryDao(): SaintHistoryDaoImp {
+        return SaintHistoryDaoImp(this)
+    }
+
+
     fun getSaintInfoById(id:Int):SaintInfo{
         val saintInfo = getSaintInfoDao().queryForId(id)
         saintInfo.imageSmall = getImageInfoDao().queryForId(saintInfo.imageSmallId)?.image
         saintInfo.imageFull = getImageInfoDao().queryForId(saintInfo.imageFullId)?.image
+
+        val qbDetail = this.getSaintHistoryDao().queryBuilder()
+        qbDetail.orderBy(SaintHistory.ID, false)
+        qbDetail.where().eq(SaintHistory.COLUMN_SAINT_ID, saintInfo.unitId)
+        saintInfo.detailInfo = getSaintHistoryDao().queryForFirst(qbDetail.prepare())
+
+        val qbTier = this.getTierInfoDao().queryBuilder()
+        qbTier.orderBy(TierInfo.ID, false)
+        qbTier.where().eq(TierInfo.COLUMN_SAINT_ID, saintInfo.unitId)
+        saintInfo.detailTier = getTierInfoDao().queryForFirst(qbTier.prepare())
+
         return saintInfo
     }
+
 
     companion object {
         // name of the database file for your application
         private const val DATABASE_NAME = "cosmo.db"
         // any time you make changes to your database objects, you may have to increase the database version
         private const val DATABASE_VERSION = 6
-        private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java, ImageInfo::class.java)
+        private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java, ImageInfo::class.java,
+            Version::class.java, SaintHistory::class.java, TierInfo::class.java)
     }
 
 

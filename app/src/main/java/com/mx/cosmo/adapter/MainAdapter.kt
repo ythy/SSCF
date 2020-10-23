@@ -50,11 +50,11 @@ class MainAdapter(val context: Context, private var datalist:List<SaintInfo>): B
             e.printStackTrace()
         }
         component.name.text = datalist[position].name
-        component.vit.text =  datalist[position].vitalityRate.toString()
-        component.aura.text =  datalist[position].auraRate.toString()
-        component.tech.text =  datalist[position].techRate.toString()
-        component.pvp.text =  datalist[position].tiersPVP
-        component.pve.text =  datalist[position].tiersPVE
+        component.vit.text =  datalist[position].detailInfo.vitalityRate.toString()
+        component.aura.text =  datalist[position].detailInfo.auraRate.toString()
+        component.tech.text =  datalist[position].detailInfo.techRate.toString()
+        component.pvp.text =  datalist[position].detailTier.tiersPVP
+        component.pve.text =  datalist[position].detailTier.tiersPVE
         return convertView!!
     }
 
