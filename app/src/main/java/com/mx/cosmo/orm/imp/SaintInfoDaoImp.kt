@@ -30,7 +30,7 @@ class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcepti
 
     fun updateSaintSmallImage(id:Int, imageId:Int){
         val ub = updateBuilder()
-        ub.updateColumnValue(SaintInfo.COLUMN_IMAGE_SAMLL, imageId)
+        ub.updateColumnValue(SaintInfo.COLUMN_IMAGE_SMALL_ID, imageId)
         ub.where().eq(SaintInfo.ID, id)
         ub.update()
     }
