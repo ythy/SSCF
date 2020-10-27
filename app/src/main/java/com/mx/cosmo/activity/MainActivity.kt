@@ -21,7 +21,6 @@ import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
 import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
-import com.mx.cosmo.orm.vo.SkillsInfo
 import com.mx.cosmo.orm.vo.Version
 import java.io.IOException
 import java.lang.Exception

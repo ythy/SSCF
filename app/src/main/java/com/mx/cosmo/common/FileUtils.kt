@@ -1,5 +1,6 @@
 package com.mx.cosmo.common
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -25,7 +26,7 @@ class FileUtils {
 
         @Throws(IOException::class)
         fun loadRemoteImage(image_url: URL): Bitmap {
-            Log.e("loadRemoteImage", image_url.toString())
+            Log.e("LoadRemoteImage", image_url.toString())
             val conn: URLConnection = image_url.openConnection()
             conn.connect()
             val bis = BufferedInputStream(conn.getInputStream())
@@ -34,75 +35,24 @@ class FileUtils {
             return bm
         }
 
-        @Throws(IOException::class)
-        fun loadRemoteImagesSize(image_url: URL): Long {
-            val conn: URLConnection = image_url.openConnection()
-            conn.connect()
-            var total: Long = 0
-            val bis = BufferedInputStream(conn.getInputStream())
-            val buffer = ByteArray(1024)
-            while (true) {
-                val length = bis.read(buffer)
-                if (length <= 0)
-                    break
-                total += length
-            }
-            bis.close()
-            return total
-        }
-
-        @Throws(IOException::class)
-        fun createFile(dir: String, filename: String): File {
-            val fileDir = File(Environment.getExternalStorageDirectory(), dir)
-            if (!fileDir.exists())
-                fileDir.mkdirs()
-            val result = File(fileDir.path, filename)
-            if (!result.exists())
-                result.createNewFile()
-            return result
-        }
-
-        fun loadRemoteFile(url: String, dest: String) {
-            val fileUrl = URL(url)
-            val inputStream = fileUrl.openStream()
-            val dis = DataInputStream(inputStream)
-            val file: File = createFile(dest, getFileName(fileUrl.file))
-            val fos = FileOutputStream(file)
-
-            val buffer = ByteArray(1024)
-            while (true) {
-                val length = dis.read(buffer)
-                if (length <= 0)
-                    break
-                fos.write(buffer, 0, length)
-            }
-        }
-
+        @Suppress("unused")
         @Throws(IOException::class)
         fun exportImgFromBitmap(bitmap: Bitmap, imageFile: File) {
             val bos = FileOutputStream(imageFile)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,
+            bitmap.compress(CompressFormat.JPEG,
                     100, bos)
             bos.flush()
             bos.close()
         }
 
+        @Suppress("unused")
         fun getFileName(path: String): String {
             val reg = Regex("^(.+)/(.+)$")
             return path.replace(reg, "$2")
         }
 
-        fun deleteDir(file: File) {
-            val contents = file.listFiles()
-            if (contents != null) {
-                for (f in contents) {
-                    deleteDir(f)
-                }
-            }
-            file.delete()
-        }
-
         //通过URI删除图片  避免缩略图不能及时删除问题
+        @Suppress("unused")
         fun deleteImages(context: Context, file: File) {
             val uri = Uri.fromFile(file)
             if (uri.scheme == "file") {
@@ -148,6 +98,7 @@ class FileUtils {
             }
         }
 
+        @SuppressLint("ObsoleteSdkInt")
         private fun callBroadCast(context: Context, file: File) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//如果是4.4及以上版本
                 Log.e("-->", " >= 19")

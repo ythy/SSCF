@@ -4,7 +4,6 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.RuntimeExceptionDao
 import com.mx.cosmo.orm.vo.SaintHistory
-import com.mx.cosmo.orm.vo.TierInfo
 
 class SaintHistoryDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExceptionDao<SaintHistory, Int>(getDao(orm)) {
 

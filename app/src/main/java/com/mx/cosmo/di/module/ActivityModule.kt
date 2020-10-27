@@ -5,7 +5,6 @@ import com.mx.cosmo.activity.BaseActivity
 import com.mx.cosmo.di.scope.ActivityScope
 import dagger.Module
 import dagger.Provides
-import android.R
 import android.content.Context.LAYOUT_INFLATER_SERVICE
 import android.view.LayoutInflater
 import android.view.ViewGroup

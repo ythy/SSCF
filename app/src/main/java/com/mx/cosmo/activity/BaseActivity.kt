@@ -18,6 +18,7 @@ open class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var mDbHelper: DataBaseHelper
 
+    @Suppress("unused")
     @Inject
     lateinit var mSP: SharedPreferences
 

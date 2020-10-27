@@ -15,6 +15,7 @@ import java.net.URL
 /**
  * Created by maoxin on 2018/10/9.
  */
+
 class Utils {
 
     companion object{
@@ -22,7 +23,7 @@ class Utils {
         fun loadJSONFromAsset(context: Context, filename:String): Pair<ArrayList<SaintInfo>, ArrayList<SkillsInfo>>{
             var json: String? = null
             try {
-                val file:InputStream? = context.getAssets().open(filename)
+                val file:InputStream? = context.assets.open(filename)
                 val size = file!!.available()
                 val buffer = ByteArray(size)
                 file.read(buffer)
@@ -146,6 +147,7 @@ class Utils {
             return Pair(saintList, skillsList)
         }
 
+        @Suppress("unused")
         fun dip2px(context: Context, dpValue: Float): Int {
             val scale = context.resources.displayMetrics.density
             return (dpValue * scale + 0.5f).toInt()
