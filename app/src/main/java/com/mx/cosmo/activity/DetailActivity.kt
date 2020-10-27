@@ -49,23 +49,11 @@ class DetailActivity: BaseActivity() {
                     mSaintInfo.imageFull = FileUtils.getBitmapAsByteArray(bmp)
                     val imageInfo = mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(mSaintInfo.imageFull!!))
                     mSaintInfo.imageFullId = imageInfo.id
-
+                    mDbHelper.getSaintInfoDao().update(mSaintInfo)
                 } catch (e: IOException) {
                     Log.e(TAG, e.message)
                 }
             }
-            if( mSaintInfo.imageSmallId <= 0) {
-                val urlSmall = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}_0.png")
-                try {
-                    val bmp = FileUtils.loadRemoteImage(urlSmall)
-                    val imageInfo =
-                        mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
-                    mSaintInfo.imageSmallId = imageInfo.id
-                } catch (e: IOException) {
-                    Log.e(TAG, e.message)
-                }
-            }
-             mDbHelper.getSaintInfoDao().update(mSaintInfo)
 
             val skillsList = mDbHelper.getSkillsInfoDao().querySkills(Utils.getIdFromUnitId(mSaintInfo.unitId))
             skillsList.forEach { skill ->

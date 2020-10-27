@@ -8,7 +8,7 @@
         android:orderInCategory="120"
         android:title="获取最新数据"/>
     <item
-        android:id="@+id/action_update_saint"
+        android:id="@+id/action_get_small_images"
         android:orderInCategory="140"
-        android:title="更新数据"/>
+        android:title="获取小图"/>
 </menu>

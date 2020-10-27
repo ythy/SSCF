@@ -2,10 +2,10 @@ package com.mx.cosmo.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ProgressDialog
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import com.mx.cosmo.MyApplication
 import com.mx.cosmo.di.component.DaggerActivityComponent
 import com.mx.cosmo.di.module.ActivityModule
@@ -22,7 +22,7 @@ open class BaseActivity : AppCompatActivity() {
     lateinit var mSP: SharedPreferences
 
     @Inject
-    lateinit var mProgressDialog: ProgressDialog
+    lateinit var mProgressDialog: AlertDialog
 
     companion object{
        const val MY_PERMISSIONS_REQUEST:Int = 102

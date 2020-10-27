@@ -19,6 +19,7 @@ import com.mx.cosmo.adapter.MainAdapter
 import com.mx.cosmo.common.FileUtils
 import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
+import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
 import com.mx.cosmo.orm.vo.SkillsInfo
 import com.mx.cosmo.orm.vo.Version
@@ -213,6 +214,25 @@ class MainActivity: BaseActivity() {
                     }
                 }).start()
             }
+            R.id.action_get_small_images -> {
+                mProgressDialog.show()
+                Thread(Runnable {
+                    this.mDataList.forEach {
+                        val url = URL(Setting.RESOURCES_REMOTE_URL + "${it.unitId}_0.png")
+                        try {
+                            if(it.imageSmallId <= 0) {
+                                val bmp = FileUtils.loadRemoteImage(url)
+                                val imageInfo = mDbHelper.getImageInfoDao()
+                                    .createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
+                                mDbHelper.getSaintInfoDao().updateSaintSmallImage(it.id, imageInfo.id)
+                            }
+                        }catch (e:IOException){
+                            Log.e(TAG, e.message)
+                        }
+                    }
+                    handler.sendEmptyMessage(7)
+                }).start()
+            }
             else -> {
 
             }
@@ -250,6 +270,10 @@ class MainActivity: BaseActivity() {
                 msg.what == 6 -> { //查最新版本
                     activity.mProgressDialog.dismiss()
                     Toast.makeText(activity, msg.obj.toString(), Toast.LENGTH_LONG).show()
+                }
+                msg.what == 7 -> {
+                    activity.mProgressDialog.dismiss()
+                    Toast.makeText(activity, "图片获取成功!", Toast.LENGTH_LONG).show()
                 }
             }
         }

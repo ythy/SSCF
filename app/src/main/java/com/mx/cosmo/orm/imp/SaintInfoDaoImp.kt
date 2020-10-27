@@ -28,13 +28,20 @@ class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcepti
         }
     }
 
+    fun updateSaintSmallImage(id:Int, imageId:Int){
+        val ub = updateBuilder()
+        ub.updateColumnValue(SaintInfo.COLUMN_IMAGE_SAMLL, imageId)
+        ub.where().eq(SaintInfo.ID, id)
+        ub.update()
+    }
+
     fun getSaintList(orderBy:String, isAsc:Boolean = false):List<SaintInfo>{
         val tableDetail = "detail"
         val tableTier = "tier"
         val tableImage = "image"
         val sql = "SELECT ${SaintInfo.ID}, ${SaintInfo.COLUMN_NAME}, " +
                 " ${SaintHistory.COLUMN_RATE_VITALITY}, ${SaintHistory.COLUMN_RATE_AURA}, ${SaintHistory.COLUMN_RATE_TECH}," +
-                " ${TierInfo.COLUMN_TIERS_PVP}, ${TierInfo.COLUMN_TIERS_PVE}, ${ImageInfo.COLUMN_IMAGE} " +
+                " ${TierInfo.COLUMN_TIERS_PVP}, ${TierInfo.COLUMN_TIERS_PVE}, ${ImageInfo.COLUMN_IMAGE}, ${SaintInfo.COLUMN_UNIT_ID} " +
                 "  FROM ${SaintInfo.TABLE_NAME} LEFT JOIN " +
 
                 " ( SELECT MAX(${SaintHistory.COLUMN_VERSION}) DV, ${SaintHistory.COLUMN_SAINT_ID} DI, " +
@@ -62,7 +69,7 @@ class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcepti
 
         val rawResults = this.queryRaw(sql,
             arrayOf(DataType.INTEGER, DataType.STRING, DataType.DOUBLE, DataType.DOUBLE, DataType.DOUBLE,
-                DataType.STRING, DataType.STRING, DataType.BYTE_ARRAY))
+                DataType.STRING, DataType.STRING, DataType.BYTE_ARRAY, DataType.INTEGER))
         val result = mutableListOf<SaintInfo>()
         for (resultArray in rawResults) {
             val saintInfo = SaintInfo()
@@ -75,6 +82,7 @@ class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcepti
             saintInfo.detailTier.tiersPVE = resultArray[6].toString()
             if(resultArray[7] != null)
                 saintInfo.imageSmall = resultArray[7] as ByteArray
+            saintInfo.unitId = resultArray[8] as Int
             result.add(saintInfo)
         }
         return result

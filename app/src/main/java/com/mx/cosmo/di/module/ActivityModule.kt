@@ -1,11 +1,15 @@
 package com.mx.cosmo.di.module
 
-
-import android.app.ProgressDialog
+import android.support.v7.app.AlertDialog
 import com.mx.cosmo.activity.BaseActivity
 import com.mx.cosmo.di.scope.ActivityScope
 import dagger.Module
 import dagger.Provides
+import android.R
+import android.content.Context.LAYOUT_INFLATER_SERVICE
+import android.view.LayoutInflater
+import android.view.ViewGroup
+
 
 /**
  * Created by maoxin on 2018/9/28.
@@ -16,13 +20,13 @@ class ActivityModule(private val activity:BaseActivity ) {
 
     @Provides
     @ActivityScope
-    internal fun provideProgressDialog(): ProgressDialog {
-        val pd = ProgressDialog(activity)
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        pd.setMessage("请稍等。。。")
-        pd.isIndeterminate = false
-        pd.setCancelable(false)
-        return pd
+    internal fun provideProgressDialog(): AlertDialog {
+        val dialogBuilder = AlertDialog.Builder(activity)
+        val inflater = activity.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater?
+        val dialogView = inflater!!.inflate(com.mx.cosmo.R.layout.dialog_progress, activity.window.decorView.rootView as ViewGroup, false)
+        dialogBuilder.setView(dialogView)
+        dialogBuilder.setCancelable(false)
+        return dialogBuilder.create()
     }
 
 }
