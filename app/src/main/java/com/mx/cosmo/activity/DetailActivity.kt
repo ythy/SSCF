@@ -8,19 +8,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.mx.cosmo.R
+import com.mx.cosmo.adapter.TiersAdapter
 import com.mx.cosmo.common.FileUtils
 import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
 import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
+import com.mx.cosmo.orm.vo.TierInfo
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.net.URL
@@ -94,7 +93,6 @@ class DetailActivity: BaseActivity() {
         mRootView.type.text = mSaintInfo.type
         mRootView.lane.text = mSaintInfo.lane
         mRootView.power.text = mSaintInfo.detailInfo.power.toString()
-        mRootView.tiers.text = String.format(resources.getString(R.string.saint_tiers), mSaintInfo.detailTier.tiersPVP, mSaintInfo.detailTier.tiersCrusade, mSaintInfo.detailTier.tiersPVE )
         mRootView.id.text = mSaintInfo.unitId.toString()
         mRootView.rateVit.text = mSaintInfo.detailInfo.vitalityRate.toString()
         mRootView.rateAura.text = mSaintInfo.detailInfo.auraRate .toString()
@@ -113,8 +111,15 @@ class DetailActivity: BaseActivity() {
         mRootView.hpRecovery.text = mSaintInfo.detailInfo.recoveryHP.toString()
         mRootView.cosmoRecovery.text = mSaintInfo.detailInfo.recoveryCosmo.toString()
 
+        setTiers()
         setSkill()
         setImages()
+    }
+
+    private fun setTiers(){
+        val tiers = mDbHelper.getTierInfoDao().getTierBySanit(mSaintInfo.unitId)
+        val adapter = TiersAdapter(this, tiers)
+        mRootView.tiers.adapter = adapter
     }
 
     private fun setImages(){
@@ -194,8 +199,8 @@ class DetailActivity: BaseActivity() {
         @BindView(R.id.tv_id)
         lateinit var id:TextView
 
-        @BindView(R.id.tv_tiers)
-        lateinit var tiers:TextView
+        @BindView(R.id.ll_tiers)
+        lateinit var tiers:ListView
 
         @BindView(R.id.tv_type)
         lateinit var type:TextView

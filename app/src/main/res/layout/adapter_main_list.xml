@@ -14,7 +14,8 @@
                 android:layout_centerInParent="true"
                 android:gravity="center"
                 android:padding="2dp"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/small_image"/>
     </RelativeLayout>
 
     <TextView

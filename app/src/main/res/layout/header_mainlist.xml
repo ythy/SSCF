@@ -9,42 +9,42 @@
             android:layout_weight="3"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="-"/>
+            android:text="@string/header_id"/>
 
     <TextView
             android:id="@+id/header_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:text="Name"/>
+            android:text="@string/header_name"/>
     <TextView
             android:id="@+id/header_vit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="Vit."/>
+            android:text="@string/header_vit"/>
     <TextView
             android:id="@+id/header_Aura"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="Aura"/>
+            android:text="@string/header_aura"/>
     <TextView
             android:id="@+id/header_tech"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="Tech."/>
+            android:text="@string/header_tech"/>
     <TextView
             android:id="@+id/header_pvp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="P"/>
+            android:text="@string/header_pvp"/>
     <TextView
             android:id="@+id/header_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="E."/>
+            android:text="@string/header_time"/>
 </LinearLayout>

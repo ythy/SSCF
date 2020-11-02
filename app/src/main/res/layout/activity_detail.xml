@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+ <ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent">
         <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
-                          android:orientation="horizontal">
+                          android:orientation="horizontal" android:baselineAligned="false">
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1">
                     <TextView android:id="@+id/tv_id" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="10dp"/>
                     <TextView android:id="@+id/tv_time" android:layout_width="wrap_content" android:layout_height="wrap_content" />
                 </LinearLayout>
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                              android:gravity="right"
+                              android:gravity="end"
                               android:paddingEnd="5dp"
+                              android:paddingStart="0dp"
                               android:layout_weight="1">
                     <Button android:id="@+id/btn_update" android:layout_width="wrap_content" android:layout_height="30dp"
-                               android:text="update image" android:padding="0dp" />
+                            android:text="@string/btn_update_image" android:padding="0dp" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="5dp">
@@ -28,125 +27,131 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="5dp">
                 <TextView android:id="@+id/tv_description" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
             </LinearLayout>
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="5dp" >
-                <TextView android:id="@+id/tv_tiers" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20dp"/>
-                <TextView android:id="@+id/tv_type" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20dp"/>
-                <TextView android:id="@+id/tv_lane" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-            </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp"
                             android:paddingLeft="50dp" android:paddingRight="50dp">
                 <ImageView android:id="@+id/iv_detail"
                            android:scaleType="fitCenter"
+                           android:contentDescription="@string/full_image"
                            android:adjustViewBounds="true"
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"/>
             </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="5dp" >
+                <TextView android:id="@+id/tv_type" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20dp"/>
+                <TextView android:id="@+id/tv_lane" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="5dp" >
+                <com.mx.cosmo.common.NestedListView android:id="@+id/ll_tiers"
+                                                    android:layout_width="200dp"
+                                                    android:layout_height="wrap_content" />
+            </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                            android:text="Vitality Growth Rate"/>
+                            android:text="@string/vitality_growth_rate"/>
                 <TextView android:id="@+id/tv_rate_vit" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Aura Growth Rate"/>
+                          android:text="@string/aura_growth_rate"/>
                 <TextView android:id="@+id/tv_rate_aura" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Tech. Growth Rate"/>
+                          android:text="@string/tech_growth_rate"/>
                 <TextView android:id="@+id/tv_rate_tech" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Power"/>
+                          android:text="@string/power"/>
                 <TextView android:id="@+id/tv_power" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Vitality"/>
+                          android:text="@string/vitality"/>
                 <TextView android:id="@+id/tv_vitality" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Aura"/>
+                          android:text="@string/aura"/>
                 <TextView android:id="@+id/tv_aura" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Technique"/>
+                          android:text="@string/technique"/>
                 <TextView android:id="@+id/tv_tech" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="HP"/>
+                          android:text="@string/hp"/>
                 <TextView android:id="@+id/tv_hp" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Phys. Attack"/>
+                          android:text="@string/phys_attack"/>
                 <TextView android:id="@+id/tv_phys_attack" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Fury Attack"/>
+                          android:text="@string/fury_attack"/>
                 <TextView android:id="@+id/tv_fury_attack" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Phys. Defense"/>
+                          android:text="@string/phys_defense"/>
                 <TextView android:id="@+id/tv_phys_defense" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Fury Resistance"/>
+                          android:text="@string/fury_resistance"/>
                 <TextView android:id="@+id/tv_fury_resistance" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Accuracy"/>
+                          android:text="@string/accuracy"/>
                 <TextView android:id="@+id/tv_accuracy" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Evasion"/>
+                          android:text="@string/evasion"/>
                 <TextView android:id="@+id/tv_evasion" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="HP Recovery"/>
+                          android:text="@string/hp_recovery"/>
                 <TextView android:id="@+id/tv_hp_recovery" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
-                <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
+                <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"
+                          tools:ignore="TooManyViews"/>
             </LinearLayout>
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"  android:orientation="horizontal" >
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="3"
-                          android:text="Cosmo Recovery"/>
+                          android:text="@string/cosmo_recovery"/>
                 <TextView android:id="@+id/tv_cosmo_recovery" android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
                 <TextView android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="2"/>
             </LinearLayout>
@@ -157,5 +162,4 @@
 
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+</ScrollView>

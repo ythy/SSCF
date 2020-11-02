@@ -1,5 +1,32 @@
 <resources>
     <string name="app_name">SSCF</string>
-    <string name="saint_tiers">%1$s / %2$s / %3$s</string>
+    <string name="saint_tiers">%1$s %2$s %3$s</string>
     <string name="waiting">Please wait..</string>
+    <string name="cosmo_recovery">Cosmo Recovery</string>
+    <string name="hp_recovery">HP Recovery</string>
+    <string name="evasion">Evasion</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="fury_resistance">Fury Resistance</string>
+    <string name="phys_defense">Phys. Defense</string>
+    <string name="fury_attack">Fury Attack</string>
+    <string name="phys_attack">Phys. Attack</string>
+    <string name="hp">HP</string>
+    <string name="vitality">Vitality</string>
+    <string name="power">Power</string>
+    <string name="tech_growth_rate">Tech. Growth Rate</string>
+    <string name="aura_growth_rate">Aura Growth Rate</string>
+    <string name="vitality_growth_rate">Vitality Growth Rate</string>
+    <string name="full_image">full image</string>
+    <string name="small_image">small image</string>
+    <string name="skill_image">skill image</string>
+    <string name="header_id">-</string>
+    <string name="header_name">Name</string>
+    <string name="header_vit">Vit.</string>
+    <string name="header_aura">Aura</string>
+    <string name="header_tech">Tech.</string>
+    <string name="header_pvp">P</string>
+    <string name="header_time">T.</string>
+    <string name="btn_update_image">update image</string>
+    <string name="aura">Aura</string>
+    <string name="technique">Technique</string>
 </resources>

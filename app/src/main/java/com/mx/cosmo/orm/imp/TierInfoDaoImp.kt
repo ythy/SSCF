@@ -32,4 +32,10 @@ class TierInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExceptio
         }
     }
 
+    fun getTierBySanit(unitId:Int):List<TierInfo>{
+        val qb = queryBuilder()
+        qb.orderBy(TierInfo.ID, false)
+        qb.where().eq(TierInfo.COLUMN_SAINT_ID, unitId)
+        return this.query(qb.prepare())
+    }
 }

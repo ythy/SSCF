@@ -8,11 +8,11 @@
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal"
-                  android:layout_marginTop="2dp">
+                  android:layout_marginTop="2dp" android:baselineAligned="false">
         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                       android:layout_weight="2">
             <ImageView android:id="@+id/iv_skill_image" android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:scaleType="fitCenter"/>
+                       android:scaleType="fitCenter" android:contentDescription="@string/skill_image"/>
         </LinearLayout>
         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                       android:layout_weight="8">
