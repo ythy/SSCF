@@ -10,6 +10,9 @@ import com.mx.cosmo.orm.vo.SkillsInfo
 import com.mx.cosmo.orm.vo.TierInfo
 import org.json.JSONTokener
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -66,7 +69,8 @@ class Utils {
                                 saintDetail.power  = detail.getInt("uber")
                             }
                             "Active Time" -> {
-                                saint.activeTime = detail.getString("uber")
+                                val time = detail.getString("uber").trim()
+                                saint.activeTime = convertActiveTime(time)
                             }
                             "Vitality Growth Rate" -> {
                                 saintDetail.vitalityRate = detail.getDouble("uber")
@@ -121,12 +125,17 @@ class Utils {
                         }
                     }
                 }
-                val tiers = if (obj.has("tiers"))  obj.getJSONObject("tiers") else null
-                if(tiers != null){
-                    tierInfo.tiersPVP = tiers.getString("PVP")
-                    tierInfo.tiersCrusade =  tiers.getString("Crusade")
-                    tierInfo.tiersPVE =  tiers.getString("PVE")
+
+                val tiers = if (obj.has("tiers"))  obj.get("tiers").toString() else ""
+                if(tiers.length < 4){
+                    tierInfo.tiersPVP = tiers
+                }else{
+                    val tiersObj = JSONObject(tiers)
+                    tierInfo.tiersPVP = tiersObj.getString("PVP")
+                    tierInfo.tiersCrusade =  tiersObj.getString("Crusade")
+                    tierInfo.tiersPVE =  tiersObj.getString("PVE")
                 }
+
                 val skills = if (obj.has("skills"))  obj.getJSONArray("skills") else null
                 if(skills != null){
                     for(k in 0 until skills.length()){
@@ -189,8 +198,19 @@ class Utils {
             }
         }
 
-
-
+        fun convertActiveTime(input:String):String{
+            var result = ""
+            try {
+                if(input != "" && input != "A long time ago..."){
+                    val date = SimpleDateFormat("MM/dd/yyyy", Locale.CHINESE).parse(input)
+                    result = SimpleDateFormat("yyyy-MM-dd", Locale.CHINESE).format(date)
+                }
+            }catch (e:java.lang.Exception){
+                e.printStackTrace()
+            }finally {
+                return result
+            }
+        }
     }
 
 

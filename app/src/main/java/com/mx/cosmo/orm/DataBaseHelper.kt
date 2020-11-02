@@ -6,9 +6,11 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper
 import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.table.TableUtils
 import com.mx.cosmo.R
+import com.mx.cosmo.common.Utils
 import com.mx.cosmo.orm.imp.*
 import com.mx.cosmo.orm.vo.*
 import java.sql.SQLException
+import java.text.SimpleDateFormat
 
 
 /**
@@ -33,36 +35,6 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
     }
 
     override fun onUpgrade(database: SQLiteDatabase, connectionSource: ConnectionSource, oldVersion: Int, newVersion: Int) {
-        if(oldVersion <= 1){
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_VITALITY + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_AURA + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_TECH + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_HP + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_PHYS_ATTACK + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_FURY_ATTACK + " INTEGER ; ")
-        }
-        if(oldVersion <= 2){
-            getSkillsInfoDao().executeRaw(" CREATE TABLE " + SkillsInfo.TABLE_NAME + " ( "
-                    + SkillsInfo.ID + " INTEGER PRIMARY KEY , "
-                    + SkillsInfo.COLUMN_SAINT_ID + " INTEGER , "
-                    + SkillsInfo.COLUMN_NAME + " VARCHAR , "
-                    + SkillsInfo.COLUMN_DESCRIPTION + " VARCHAR , "
-                    + SkillsInfo.COLUMN_EFFECTS + " VARCHAR , "
-                    + SkillsInfo.COLUMN_IMAGE + " BLOB )")
-        }
-        if(oldVersion <= 3){
-            getSkillsInfoDao().executeRaw("ALTER TABLE " + SkillsInfo.TABLE_NAME + " ADD COLUMN  " + SkillsInfo.COLUMN_UNIT_ID + " INTEGER ; ")
-        }
-        if(oldVersion <= 4){
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_PHYS_DEFENSE + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_FURY_RESISTANCE + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_ACCURACY + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_EVASION + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_HP_RECOVERY + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_COSMO_RECOVERY + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_CLOTH + " VARCHAR ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_DESCRIPTION + " VARCHAR ; ")
-        }
         if(oldVersion <= 5){
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_IMAGE_SMALL_ID + " INTEGER ; ")
             getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_IMAGE_FULL_ID + " INTEGER ; ")
@@ -71,7 +43,14 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
                     + ImageInfo.ID + " INTEGER PRIMARY KEY , "
                     + ImageInfo.COLUMN_IMAGE + " BLOB )")
         }
-
+        if(oldVersion <= 6){
+            val saintInfo = getSaintInfoDao().queryForAll()
+            saintInfo.forEach {
+                val time = it.activeTime
+                it.activeTime = Utils.convertActiveTime(time)
+                getSaintInfoDao().update(it)
+            }
+        }
     }
 
     fun getSaintInfoDao(): SaintInfoDaoImp {
@@ -122,7 +101,7 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         // name of the database file for your application
         private const val DATABASE_NAME = "cosmo.db"
         // any time you make changes to your database objects, you may have to increase the database version
-        private const val DATABASE_VERSION = 6
+        private const val DATABASE_VERSION = 7
         private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java, ImageInfo::class.java,
             Version::class.java, SaintHistory::class.java, TierInfo::class.java)
     }

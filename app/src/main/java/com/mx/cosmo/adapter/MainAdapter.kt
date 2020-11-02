@@ -54,7 +54,7 @@ class MainAdapter(val context: Context, private var datalist:List<SaintInfo>): B
         component.aura.text =  datalist[position].detailInfo.auraRate.toString()
         component.tech.text =  datalist[position].detailInfo.techRate.toString()
         component.pvp.text =  datalist[position].detailTier.tiersPVP
-        component.pve.text =  datalist[position].detailTier.tiersPVE
+        component.time.text =  datalist[position].activeTime
         return convertView!!
     }
 
@@ -78,8 +78,8 @@ class MainAdapter(val context: Context, private var datalist:List<SaintInfo>): B
         @BindView(R.id.tv_pvp)
         lateinit var pvp: TextView
 
-        @BindView(R.id.tv_pve)
-        lateinit var pve: TextView
+        @BindView(R.id.tv_time)
+        lateinit var time: TextView
 
         init {
             ButterKnife.bind(this, view)

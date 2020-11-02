@@ -19,9 +19,7 @@ import com.mx.cosmo.adapter.MainAdapter
 import com.mx.cosmo.common.FileUtils
 import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
-import com.mx.cosmo.orm.vo.ImageInfo
-import com.mx.cosmo.orm.vo.SaintInfo
-import com.mx.cosmo.orm.vo.Version
+import com.mx.cosmo.orm.vo.*
 import java.io.IOException
 import java.lang.Exception
 import java.lang.ref.WeakReference
@@ -50,15 +48,18 @@ class MainActivity: BaseActivity() {
         startActivity(intent)
     }
 
-    @OnClick(R.id.header_profile, R.id.header_name, R.id.header_vit, R.id.header_Aura, R.id.header_tech)
+    @OnClick(R.id.header_profile, R.id.header_name, R.id.header_vit, R.id.header_Aura,
+        R.id.header_tech, R.id.header_pvp, R.id.header_time)
     fun pickHeaderHandler(header:TextView) {
         var orderBy = ""
         when(header.id){
             R.id.header_profile -> orderBy = SaintInfo.ID
             R.id.header_name -> orderBy = SaintInfo.COLUMN_NAME
-            R.id.header_vit -> orderBy = SaintInfo.COLUMN_RATE_VITALITY
-            R.id.header_Aura -> orderBy = SaintInfo.COLUMN_RATE_AURA
-            R.id.header_tech -> orderBy = SaintInfo.COLUMN_RATE_TECH
+            R.id.header_vit -> orderBy = SaintHistory.COLUMN_RATE_VITALITY
+            R.id.header_Aura -> orderBy = SaintHistory.COLUMN_RATE_AURA
+            R.id.header_tech -> orderBy = SaintHistory.COLUMN_RATE_TECH
+            R.id.header_pvp -> orderBy = TierInfo.COLUMN_TIERS_PVP
+            R.id.header_time -> orderBy = SaintInfo.COLUMN_ACTIVE_TIME
         }
         mOderAsc = if( orderBy == mOrderBy ) !mOderAsc else false
         mOrderBy = orderBy
