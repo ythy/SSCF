@@ -35,6 +35,13 @@ class SaintInfoDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExcepti
         ub.update()
     }
 
+    fun updateSaintFullImage(id:Int, imageId:Int){
+        val ub = updateBuilder()
+        ub.updateColumnValue(SaintInfo.COLUMN_IMAGE_FULL_ID, imageId)
+        ub.where().eq(SaintInfo.ID, id)
+        ub.update()
+    }
+
     fun getSaintList(orderBy:String, isAsc:Boolean = false):List<SaintInfo>{
         val tableDetail = "detail"
         val tableTier = "tier"

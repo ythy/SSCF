@@ -233,6 +233,25 @@ class MainActivity: BaseActivity() {
                     handler.sendEmptyMessage(7)
                 }).start()
             }
+            R.id.action_get_full_images -> {
+                mProgressDialog.show()
+                Thread(Runnable {
+                    this.mDataList.forEach {
+                        val url = URL(Setting.RESOURCES_REMOTE_URL + "${it.unitId}.png")
+                        try {
+                            if(it.imageFullId <= 0) {
+                                val bmp = FileUtils.loadRemoteImage(url)
+                                val imageInfo = mDbHelper.getImageInfoDao()
+                                    .createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
+                                mDbHelper.getSaintInfoDao().updateSaintFullImage(it.id, imageInfo.id)
+                            }
+                        }catch (e:IOException){
+                            Log.e(TAG, e.message)
+                        }
+                    }
+                    handler.sendEmptyMessage(7)
+                }).start()
+            }
             else -> {
 
             }

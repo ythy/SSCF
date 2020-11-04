@@ -2,13 +2,17 @@
     <item
         android:id="@+id/action_get_last_version"
         android:orderInCategory="110"
-        android:title="获取最新版本号"/>
+        android:title="@string/menu_get_last_version"/>
     <item
         android:id="@+id/action_get_last_version_data"
         android:orderInCategory="120"
-        android:title="获取最新数据"/>
+        android:title="@string/menu_get_last_data"/>
     <item
         android:id="@+id/action_get_small_images"
         android:orderInCategory="140"
-        android:title="获取小图"/>
+        android:title="@string/menu_get_small_image"/>
+    <item
+        android:id="@+id/action_get_full_images"
+        android:orderInCategory="150"
+        android:title="@string/menu_get_full_image"/>
 </menu>
