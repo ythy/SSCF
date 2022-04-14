@@ -4,19 +4,25 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.mx.cosmo.R
+import com.mx.cosmo.adapter.BasicinfoPagerAdapter
 import com.mx.cosmo.adapter.TiersAdapter
 import com.mx.cosmo.common.FileUtils
 import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
+import com.mx.cosmo.fragment.BasicinfoFragment
+import com.mx.cosmo.fragment.SkillsFragment
 import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
 import com.mx.cosmo.orm.vo.TierInfo
@@ -34,9 +40,6 @@ class DetailActivity: BaseActivity() {
     private lateinit var mRootView:RootView
     private lateinit var mSaintInfo:SaintInfo
 
-    @BindView(R.id.ll_skills)
-    lateinit var mSkillsBox:LinearLayout
-
     @OnClick(R.id.btn_update)
     fun onBtnUpdateClickHandler(){
         mProgressDialog.show()
@@ -53,22 +56,6 @@ class DetailActivity: BaseActivity() {
                     Log.e(TAG, e.message)
                 }
             }
-
-            val skillsList = mDbHelper.getSkillsInfoDao().querySkills(Utils.getIdFromUnitId(mSaintInfo.unitId))
-            skillsList.forEach { skill ->
-                val url = URL(Setting.RESOURCES_REMOTE_URL + "${skill.unitId}_0.png")
-                try {
-                    if(skill.imageId <= 0) {
-                        val bmp = FileUtils.loadRemoteImage(url)
-                        val imageInfo = mDbHelper.getImageInfoDao()
-                            .createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
-                        skill.imageId = imageInfo.id
-                        mDbHelper.getSkillsInfoDao().update(skill)
-                    }
-                }catch (e:IOException){
-                    Log.e(MainActivity.TAG, e.message)
-                }
-            }
             mHandler.sendEmptyMessage(1)
         }).start()
     }
@@ -78,9 +65,9 @@ class DetailActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+        ButterKnife.bind(this)
         val id = intent.getIntExtra("saint_id", 0)
         this.mSaintInfo = mDbHelper.getSaintInfoById(id)
-        ButterKnife.bind(this)
         this.mRootView = RootView(window.decorView.rootView)
         this.setBaseView()
     }
@@ -92,28 +79,12 @@ class DetailActivity: BaseActivity() {
         mRootView.description.text = mSaintInfo.description
         mRootView.type.text = mSaintInfo.type
         mRootView.lane.text = mSaintInfo.lane
-        mRootView.power.text = mSaintInfo.detailInfo.power.toString()
         mRootView.id.text = mSaintInfo.unitId.toString()
-        mRootView.rateVit.text = mSaintInfo.detailInfo.vitalityRate.toString()
-        mRootView.rateAura.text = mSaintInfo.detailInfo.auraRate .toString()
-        mRootView.rateTech.text = mSaintInfo.detailInfo.techRate.toString()
-
-        mRootView.vitality.text = mSaintInfo.detailInfo.vitality.toString()
-        mRootView.aura.text = mSaintInfo.detailInfo.aura.toString()
-        mRootView.tech.text = mSaintInfo.detailInfo.technique.toString()
-        mRootView.hp.text = mSaintInfo.detailInfo.hp.toString()
-        mRootView.physAttack.text = mSaintInfo.detailInfo.physAttack.toString()
-        mRootView.furyAttack.text = mSaintInfo.detailInfo.furyAttack.toString()
-        mRootView.physDefense.text = mSaintInfo.detailInfo.physDefense.toString()
-        mRootView.furyResistance.text = mSaintInfo.detailInfo.furyResistance.toString()
-        mRootView.accuracy.text = mSaintInfo.detailInfo.accuracy.toString()
-        mRootView.evasion.text = mSaintInfo.detailInfo.evasion.toString()
-        mRootView.hpRecovery.text = mSaintInfo.detailInfo.recoveryHP.toString()
-        mRootView.cosmoRecovery.text = mSaintInfo.detailInfo.recoveryCosmo.toString()
 
         setTiers()
-        setSkill()
         setImages()
+        setBasicPager()
+        setSkillsPager()
     }
 
     private fun setTiers(){
@@ -129,19 +100,76 @@ class DetailActivity: BaseActivity() {
             mRootView.image.setImageBitmap(null)
     }
 
-    private fun setSkill(){
-        mSkillsBox.removeAllViews()
-        val skillsList = mDbHelper.getSkillsInfoDao().querySkills(Utils.getIdFromUnitId(mSaintInfo.unitId))
-        skillsList.forEach {
-            val child = LayoutInflater.from(this@DetailActivity).inflate(
-                R.layout.layout_skills, mSkillsBox, false)
-            mSkillsBox.addView(child)
-            val skills = Skills(child)
-            skills.name.text = it.name
-            skills.description.text = it.description
-            if(it.image != null)
-                skills.images.setImageBitmap(BitmapFactory.decodeByteArray(it.image, 0, it.image!!.size))
+    private fun setBasicPager(){
+
+        val basicHis = mDbHelper.getSaintHistoryDao().querySaintHistory(mSaintInfo.unitId)
+        val fragments = arrayListOf<Fragment>()
+
+        basicHis.forEachIndexed { index, it ->
+            val bundle = Bundle()
+            bundle.putInt("id", it.id)
+            if( index + 1 < basicHis.size){
+                bundle.putInt("lastId", basicHis[index + 1].id)
+            }else{
+                bundle.putInt("lastId", -1)
+            }
+            val basicFragment = BasicinfoFragment()
+            basicFragment.arguments = bundle
+            fragments.add(basicFragment)
         }
+
+        mRootView.basicPager.adapter = BasicinfoPagerAdapter(supportFragmentManager, fragments)
+        mRootView.basicPager.currentItem = 0
+
+        val params = mRootView.basicPager.getLayoutParams()
+        params.height = Utils.dip2px(this, 400f)
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
+        mRootView.basicPager.requestLayout()
+    }
+
+    private fun setSkillsPager(){
+        val skillsList = mDbHelper.getSkillsInfoDao().querySkills(mSaintInfo.unitId)
+        skillsList.forEachIndexed { index, element ->
+            val skillsHis = mDbHelper.getSkillsHistoryDao().querySkillsHistory(element.unitId)
+            val fragments = arrayListOf<Fragment>()
+            skillsHis.forEachIndexed { index, it ->
+                val bundle = Bundle()
+                bundle.putInt("id", it.id)
+                if( index + 1 < skillsHis.size){
+                    bundle.putInt("lastId", skillsHis[index + 1].id)
+                }else{
+                    bundle.putInt("lastId", -1)
+                }
+                val skillsFragment = SkillsFragment()
+                skillsFragment.arguments = bundle
+                fragments.add(skillsFragment)
+            }
+            when (index) {
+                0 -> {
+                    setViewPager(mRootView.skillsPager1, fragments)
+                }
+                1 -> {
+                    setViewPager(mRootView.skillsPager2, fragments)
+                }
+                2 -> {
+                    setViewPager(mRootView.skillsPager3, fragments)
+                }
+                3 -> {
+                    setViewPager(mRootView.skillsPager4, fragments)
+                }
+            }
+
+
+        }
+    }
+
+    private fun setViewPager(viewPager:ViewPager, fragments:ArrayList<Fragment>){
+        viewPager.adapter = BasicinfoPagerAdapter(supportFragmentManager, fragments)
+        viewPager.currentItem = 0
+        val params = viewPager.getLayoutParams()
+        params.height = Utils.dip2px(this, 300f)
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT
+        viewPager.requestLayout()
     }
 
     class MyHandler constructor(activity:DetailActivity):Handler(){
@@ -154,29 +182,10 @@ class DetailActivity: BaseActivity() {
                 msg.what == 1 -> {
                     activity.mProgressDialog.dismiss()
                     activity.setImages()
-                    activity.setSkill()
                     Toast.makeText(activity, "update done", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-    }
-
-
-    class Skills constructor(view: View){
-
-        @BindView(R.id.iv_skill_image)
-        lateinit var images:ImageView
-
-        @BindView(R.id.tv_skills_name)
-        lateinit var name:TextView
-
-        @BindView(R.id.tv_skill_description)
-        lateinit var description:TextView
-
-        init {
-            ButterKnife.bind(this, view)
-        }
-
     }
 
     class RootView constructor(view: View){
@@ -208,53 +217,20 @@ class DetailActivity: BaseActivity() {
         @BindView(R.id.tv_lane)
         lateinit var lane:TextView
 
-        @BindView(R.id.tv_power)
-        lateinit var power:TextView
+        @BindView(R.id.vp_basicinfo)
+        lateinit var basicPager:ViewPager
 
-        @BindView(R.id.tv_rate_vit)
-        lateinit var rateVit:TextView
+        @BindView(R.id.vp_skills1)
+        lateinit var skillsPager1:ViewPager
 
-        @BindView(R.id.tv_rate_aura)
-        lateinit var rateAura:TextView
+        @BindView(R.id.vp_skills2)
+        lateinit var skillsPager2:ViewPager
 
-        @BindView(R.id.tv_rate_tech)
-        lateinit var rateTech:TextView
+        @BindView(R.id.vp_skills3)
+        lateinit var skillsPager3:ViewPager
 
-        @BindView(R.id.tv_vitality)
-        lateinit var vitality:TextView
-
-        @BindView(R.id.tv_aura)
-        lateinit var aura:TextView
-
-        @BindView(R.id.tv_tech)
-        lateinit var tech:TextView
-
-        @BindView(R.id.tv_hp)
-        lateinit var hp:TextView
-
-        @BindView(R.id.tv_phys_attack)
-        lateinit var physAttack:TextView
-
-        @BindView(R.id.tv_fury_attack)
-        lateinit var furyAttack:TextView
-
-        @BindView(R.id.tv_phys_defense)
-        lateinit var physDefense:TextView
-
-        @BindView(R.id.tv_fury_resistance)
-        lateinit var furyResistance:TextView
-
-        @BindView(R.id.tv_accuracy)
-        lateinit var accuracy:TextView
-
-        @BindView(R.id.tv_evasion)
-        lateinit var evasion:TextView
-
-        @BindView(R.id.tv_hp_recovery)
-        lateinit var hpRecovery:TextView
-
-        @BindView(R.id.tv_cosmo_recovery)
-        lateinit var cosmoRecovery:TextView
+        @BindView(R.id.vp_skills4)
+        lateinit var skillsPager4:ViewPager
 
         init {
             ButterKnife.bind(this, view)

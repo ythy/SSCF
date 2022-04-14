@@ -3,6 +3,7 @@ package com.mx.cosmo.orm.imp
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.RuntimeExceptionDao
+import com.j256.ormlite.stmt.Where
 import com.mx.cosmo.orm.vo.SaintHistory
 
 class SaintHistoryDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExceptionDao<SaintHistory, Int>(getDao(orm)) {
@@ -24,7 +25,8 @@ class SaintHistoryDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExce
         val oldDetail = qb.queryForFirst()
         if(oldDetail == null){
             this.create(detail)
-        }else if(!( oldDetail.power == detail.power
+        }else if(!( oldDetail.level == detail.level
+                    && oldDetail.power == detail.power
                     && oldDetail.vitalityRate == detail.vitalityRate
                     && oldDetail.auraRate == detail.auraRate
                     && oldDetail.techRate == detail.techRate
@@ -43,4 +45,13 @@ class SaintHistoryDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExce
             this.create(detail)
         }
     }
+
+    fun querySaintHistory(saintId:Int):List<SaintHistory>{
+        val qb = this.queryBuilder()
+        val where: Where<SaintHistory, Int> = qb.where()
+        where.eq(SaintHistory.COLUMN_SAINT_ID, saintId)
+        qb.orderBy(SaintHistory.ID, false)
+        return this.query(qb.prepare())
+    }
+
 }

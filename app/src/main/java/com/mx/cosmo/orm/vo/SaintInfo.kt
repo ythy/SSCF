@@ -21,8 +21,6 @@ class SaintInfo() : Parcelable {
         const val COLUMN_ACTIVE_TIME = "active_time"
         const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_CLOTH = "cloth"
-        const val COLUMN_IMAGE_SAMLL = "image_small"
-        const val COLUMN_IMAGE_FULL = "image_full"
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<SaintInfo> {

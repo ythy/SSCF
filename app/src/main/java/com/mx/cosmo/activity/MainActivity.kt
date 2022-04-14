@@ -123,24 +123,28 @@ class MainActivity: BaseActivity() {
         }).start()
     }
 
+    fun updateDB(saintData:ArrayList<SaintInfo>, skillsData:ArrayList<SkillsInfo>, versionDate:String, versionNumber:String = ""){
+        saintData.forEach {
+            mDbHelper.getSaintInfoDao().createNewSaint(it)
+            mDbHelper.getSaintHistoryDao().createSaintDetail(it.detailInfo)
+            mDbHelper.getTierInfoDao().createTier(it.detailTier)
+        }
+        skillsData.forEach {
+            mDbHelper.getSkillsInfoDao().createNewSkills(it)
+            mDbHelper.getSkillsHistoryDao().createSkillsDetail(it.details)
+        }
+        val version = Version()
+        version.date = versionDate
+        version.version = versionNumber
+        mDbHelper.getVersionDao().create(version)
+    }
+
     private fun updateList(result:List<SaintInfo>){
         if(result.isEmpty()){
             mProgressDialog.show()
             Thread(Runnable {
                 val (saintData, skillsData) = Utils.loadJSONFromAsset(this, Setting.DEFAULT_DATA_FILE)
-                saintData.forEach {
-                    mDbHelper.getSaintInfoDao().create(it)
-                    mDbHelper.getSaintHistoryDao().create(it.detailInfo)
-                    mDbHelper.getTierInfoDao().create(it.detailTier)
-                }
-                skillsData.forEach {
-                    mDbHelper.getSkillsInfoDao().create(it)
-                }
-                val version = Version()
-                version.date = Setting.DEFAULT_DATA_DATE
-                version.version = Setting.DEFAULT_DATA_VERSION
-                mDbHelper.getVersionDao().create(version)
-
+                updateDB(saintData, skillsData, Setting.DEFAULT_DATA_DATE, Setting.DEFAULT_DATA_VERSION)
                 handler.sendEmptyMessage(1)
             }).start()
         }else{
@@ -170,18 +174,7 @@ class MainActivity: BaseActivity() {
                         if(newVersion > oldVersion){
                             val json = Utils.loadRemoteJsonData(Setting.SAINT_REMOTE_URL)
                             val (saintData, skillsData) = Utils.parseJsonData(json, newVersion)
-                            saintData.forEach {
-                                mDbHelper.getSaintInfoDao().createNewSaint(it)
-                                mDbHelper.getSaintHistoryDao().createSaintDetail(it.detailInfo)
-                                mDbHelper.getTierInfoDao().createTier(it.detailTier)
-                            }
-                            skillsData.forEach {
-                                mDbHelper.getSkillsInfoDao().createNewSkills(it)
-                            }
-                            val version = Version()
-                            version.date = newVersion
-                            version.version = newVersionNumber
-                            mDbHelper.getVersionDao().create(version)
+                            updateDB(saintData, skillsData, newVersion, newVersionNumber)
                             msg.what = 3
                             msg.obj = "更新完成"
                         }else{
@@ -250,6 +243,16 @@ class MainActivity: BaseActivity() {
                         }
                     }
                     handler.sendEmptyMessage(7)
+                }).start()
+            }
+            R.id.action_get_version_20220408-> {
+                mProgressDialog.show()
+                val date = "2022-04-08"
+                Thread(Runnable {
+                    val (saintData, skillsData) =
+                        Utils.loadJSONFromAsset(this, Setting.DEFAULT_UPGRADE_DATA_FILE, date)
+                    updateDB(saintData, skillsData, date)
+                    handler.sendEmptyMessage(1)
                 }).start()
             }
             else -> {

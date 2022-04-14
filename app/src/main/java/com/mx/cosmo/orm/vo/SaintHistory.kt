@@ -12,6 +12,7 @@ class SaintHistory {
         const val ID = "_id"
         const val COLUMN_SAINT_ID = "saint_id" //   10027701
         const val COLUMN_VERSION = "version" // database 2020-10-21
+        const val COLUMN_LEVEL = "level"
         const val COLUMN_POWER = "power"
         const val COLUMN_RATE_VITALITY = "grow_rate_vitality"
         const val COLUMN_RATE_AURA = "grow_rate_aura"
@@ -38,6 +39,9 @@ class SaintHistory {
 
     @DatabaseField(columnName = COLUMN_VERSION)
     var version:String = ""
+
+    @DatabaseField
+    var level:Int = 0
 
     @DatabaseField
     var power:Int = 0

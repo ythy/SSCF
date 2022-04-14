@@ -13,7 +13,7 @@ class DatabaseConfigUtil{
 
     companion object {
         private val classes = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java,
-            ImageInfo::class.java, Version::class.java, SaintHistory::class.java, TierInfo::class.java)
+            ImageInfo::class.java, Version::class.java, SaintHistory::class.java, TierInfo::class.java, SkillsHistory::class.java)
 
         @JvmStatic
         fun main(args: Array<String>) {

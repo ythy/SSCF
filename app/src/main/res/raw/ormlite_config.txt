@@ -1,5 +1,5 @@
 #
-# generated on 2020/10/23 10:41:28
+# generated on 2022/04/13 01:54:35
 #
 # --table-start--
 dataClass=com.mx.cosmo.orm.vo.SaintInfo
@@ -63,19 +63,6 @@ columnName=saint_id
 fieldName=unitId
 columnName=unit_id
 # --field-end--
-# --field-start--
-fieldName=name
-# --field-end--
-# --field-start--
-fieldName=description
-# --field-end--
-# --field-start--
-fieldName=effects
-# --field-end--
-# --field-start--
-fieldName=imageId
-columnName=image_id
-# --field-end--
 # --table-fields-end--
 # --table-end--
 #################################
@@ -133,6 +120,9 @@ columnName=saint_id
 # --field-start--
 fieldName=version
 columnName=version
+# --field-end--
+# --field-start--
+fieldName=level
 # --field-end--
 # --field-start--
 fieldName=power
@@ -225,6 +215,42 @@ columnName=tiers_crusade
 # --field-start--
 fieldName=tiersPVE
 columnName=tiers_PVE
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=com.mx.cosmo.orm.vo.SkillsHistory
+tableName=skill_history
+# --table-fields-start--
+# --field-start--
+fieldName=id
+columnName=_id
+generatedId=true
+allowGeneratedIdInsert=true
+# --field-end--
+# --field-start--
+fieldName=unitId
+columnName=unit_id
+# --field-end--
+# --field-start--
+fieldName=level
+# --field-end--
+# --field-start--
+fieldName=name
+# --field-end--
+# --field-start--
+fieldName=version
+# --field-end--
+# --field-start--
+fieldName=description
+# --field-end--
+# --field-start--
+fieldName=effects
+# --field-end--
+# --field-start--
+fieldName=imageId
+columnName=image_id
 # --field-end--
 # --table-fields-end--
 # --table-end--

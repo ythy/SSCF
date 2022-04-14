@@ -33,22 +33,7 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
     }
 
     override fun onUpgrade(database: SQLiteDatabase, connectionSource: ConnectionSource, oldVersion: Int, newVersion: Int) {
-        if(oldVersion <= 5){
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_IMAGE_SMALL_ID + " INTEGER ; ")
-            getSaintInfoDao().executeRaw("ALTER TABLE " + SaintInfo.TABLE_NAME + " ADD COLUMN  " + SaintInfo.COLUMN_IMAGE_FULL_ID + " INTEGER ; ")
-            getSkillsInfoDao().executeRaw("ALTER TABLE " + SkillsInfo.TABLE_NAME + " ADD COLUMN  " + SkillsInfo.COLUMN_IMAGE_ID + " INTEGER ; ")
-            getImageInfoDao().executeRaw(" CREATE TABLE " + ImageInfo.TABLE_NAME + " ( "
-                    + ImageInfo.ID + " INTEGER PRIMARY KEY , "
-                    + ImageInfo.COLUMN_IMAGE + " BLOB )")
-        }
-        if(oldVersion <= 6){
-            val saintInfo = getSaintInfoDao().queryForAll()
-            saintInfo.forEach {
-                val time = it.activeTime
-                it.activeTime = Utils.convertActiveTime(time)
-                getSaintInfoDao().update(it)
-            }
-        }
+
     }
 
     fun getSaintInfoDao(): SaintInfoDaoImp {
@@ -75,16 +60,14 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         return SaintHistoryDaoImp(this)
     }
 
+    fun getSkillsHistoryDao(): SkillsHistoryDaoImp {
+        return SkillsHistoryDaoImp(this)
+    }
 
     fun getSaintInfoById(id:Int):SaintInfo{
         val saintInfo = getSaintInfoDao().queryForId(id)
         saintInfo.imageSmall = getImageInfoDao().queryForId(saintInfo.imageSmallId)?.image
         saintInfo.imageFull = getImageInfoDao().queryForId(saintInfo.imageFullId)?.image
-
-        val qbDetail = this.getSaintHistoryDao().queryBuilder()
-        qbDetail.orderBy(SaintHistory.ID, false)
-        qbDetail.where().eq(SaintHistory.COLUMN_SAINT_ID, saintInfo.unitId)
-        saintInfo.detailInfo = getSaintHistoryDao().queryForFirst(qbDetail.prepare())
 
         val qbTier = this.getTierInfoDao().queryBuilder()
         qbTier.orderBy(TierInfo.ID, false)
@@ -99,9 +82,9 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         // name of the database file for your application
         private const val DATABASE_NAME = "cosmo.db"
         // any time you make changes to your database objects, you may have to increase the database version
-        private const val DATABASE_VERSION = 7
+        private const val DATABASE_VERSION = 8
         private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java, ImageInfo::class.java,
-            Version::class.java, SaintHistory::class.java, TierInfo::class.java)
+            Version::class.java, SaintHistory::class.java, TierInfo::class.java, SkillsHistory::class.java)
     }
 
 
