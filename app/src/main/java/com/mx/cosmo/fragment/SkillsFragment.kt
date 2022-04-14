@@ -1,7 +1,6 @@
 package com.mx.cosmo.fragment
 
-import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Spannable
@@ -24,16 +23,17 @@ import com.mx.cosmo.orm.vo.SkillsHistory
 class SkillsFragment : Fragment() {
 
     lateinit var context: DetailActivity
+    lateinit var mView:View
     private lateinit var skillsView: Skills
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_skills, container, false)
+        mView = inflater!!.inflate(R.layout.fragment_skills, container, false)
         context = activity as DetailActivity
-        this.skillsView = Skills(view)
+        this.skillsView = Skills(mView)
         val id = arguments!!.getInt("id")
         val lastId = arguments!!.getInt("lastId")
         this.setSkill(id, lastId)
-        return view
+        return mView
     }
 
     private fun setSkill(id:Int, lastId:Int){
@@ -47,21 +47,21 @@ class SkillsFragment : Fragment() {
 
         skillsView.description.text = skillsHistory.description
         if(lastInfo?.description != null && skillsHistory.description != lastInfo.description){
-            skillsView.description.setTextColor(Color.rgb(215,81,81))
+            skillsView.description.setTextColor(resources.getColor(R.color.colorDiff, null))
         }
-        if(lastInfo?.effects != null){
+        if(lastInfo?.effects != null && skillsHistory.effects != lastInfo.effects){
             val level = skillsHistory.level.toString()
             val spannable = SpannableString(skillsHistory.effects)
             val effectArray = skillsHistory.effects.split(" ")
             var index = 0
             effectArray.forEachIndexed { i, it ->
                 if(it.trim() == level){
-                    spannable.setSpan(ForegroundColorSpan(Color.rgb(215,81,81)), index, index + it.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    spannable.setSpan(ForegroundColorSpan(resources.getColor(R.color.colorDiff, null)), index, index + it.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }else if(it.trim().indexOf("@$level") == 0 ){
-                    spannable.setSpan(ForegroundColorSpan(Color.rgb(215,81,81)), index, index + "@$level".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    spannable.setSpan(ForegroundColorSpan(resources.getColor(R.color.colorDiff, null)), index, index + "@$level".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     if(i - 1 >= 0){
                         val lastLength = effectArray[i - 1].length
-                        spannable.setSpan(ForegroundColorSpan(Color.rgb(215,81,81)), index - 1 - lastLength, index - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        spannable.setSpan(ForegroundColorSpan(resources.getColor(R.color.colorDiff, null)), index - 1 - lastLength, index - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
                 }
                 index += it.length + 1
@@ -70,8 +70,9 @@ class SkillsFragment : Fragment() {
         }else{
             skillsView.effects.text = skillsHistory.effects
         }
-
     }
+
+
 
     class Skills constructor(view: View){
 

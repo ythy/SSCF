@@ -26,11 +26,12 @@
     <string name="header_tech">Tech.</string>
     <string name="header_pvp">P</string>
     <string name="header_time">T.</string>
-    <string name="btn_update_image">update image</string>
+    <string name="btn_update_image">up.detail</string>
     <string name="aura">Aura</string>
     <string name="technique">Technique</string>
     <string name="menu_get_last_version">获取最新版本号</string>
     <string name="menu_get_last_data">获取最新数据</string>
     <string name="menu_get_small_image">获取小图</string>
     <string name="menu_get_full_image">获取大图</string>
+    <string name="title_basic_info">BasicInfo:</string>
 </resources>

@@ -25,13 +25,11 @@ import com.mx.cosmo.fragment.BasicinfoFragment
 import com.mx.cosmo.fragment.SkillsFragment
 import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
-import com.mx.cosmo.orm.vo.TierInfo
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.net.URL
 
 class DetailActivity: BaseActivity() {
-
     companion object{
         const val TAG = "DetailActivity"
     }
@@ -96,8 +94,10 @@ class DetailActivity: BaseActivity() {
     private fun setImages(){
         if(mSaintInfo.imageFull != null)
             mRootView.image.setImageBitmap(BitmapFactory.decodeByteArray(mSaintInfo.imageFull, 0, mSaintInfo.imageFull!!.size))
-        else
+        else{
             mRootView.image.setImageBitmap(null)
+            mRootView.image.visibility = View.GONE
+        }
     }
 
     private fun setBasicPager(){
@@ -158,19 +158,24 @@ class DetailActivity: BaseActivity() {
                     setViewPager(mRootView.skillsPager4, fragments)
                 }
             }
-
-
         }
+
     }
 
     private fun setViewPager(viewPager:ViewPager, fragments:ArrayList<Fragment>){
         viewPager.adapter = BasicinfoPagerAdapter(supportFragmentManager, fragments)
         viewPager.currentItem = 0
+        //etViewPagerHeight(viewPager, 300f)
+    }
+
+    private fun setViewPagerHeight(viewPager:ViewPager, height:Float){
         val params = viewPager.getLayoutParams()
-        params.height = Utils.dip2px(this, 300f)
+        params.height = Utils.dip2px(this, height)
         params.width = ViewGroup.LayoutParams.MATCH_PARENT
         viewPager.requestLayout()
     }
+
+
 
     class MyHandler constructor(activity:DetailActivity):Handler(){
         private val weakReference:WeakReference<DetailActivity> = WeakReference(activity)

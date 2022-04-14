@@ -59,14 +59,14 @@ class BasicinfoFragment : Fragment() {
     private fun setTextWithColor(view:TextView, newText:Double, oldText:Double? = null ){
         view.text = newText.toString()
         if(oldText != null && newText != oldText){
-            view.setTextColor(Color.rgb(215,81,81))
+            view.setTextColor(resources.getColor(R.color.colorDiff, null))
         }
     }
 
     private fun setTextWithColor(view:TextView, newText:Int, oldText:Int? = null ){
         view.text = newText.toString()
         if(oldText != null && newText != oldText){
-            view.setTextColor(Color.rgb(215,81,81))
+            view.setTextColor(resources.getColor(R.color.colorDiff, null))
         }
     }
 
