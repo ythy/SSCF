@@ -15,7 +15,7 @@ import java.sql.SQLException
  * Created by maoxin on 2020/10/10.
  */
 
-class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config) {
+class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     /**
      * This is called when the database is first created. Usually you should call createTable statements here to create
@@ -33,7 +33,9 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
     }
 
     override fun onUpgrade(database: SQLiteDatabase, connectionSource: ConnectionSource, oldVersion: Int, newVersion: Int) {
-
+        if(oldVersion <= 8){ // new : 9 SkillsInfo 增加 imageId
+           getSkillsInfoDao().executeRaw("ALTER TABLE " + SkillsInfo.TABLE_NAME + " ADD COLUMN  " + SkillsInfo.COLUMN_IMAGE_ID + " INTEGER ; ")
+        }
     }
 
     fun getSaintInfoDao(): SaintInfoDaoImp {
@@ -77,12 +79,11 @@ class DataBaseHelper (context: Context) : OrmLiteSqliteOpenHelper(context, DATAB
         return saintInfo
     }
 
-
     companion object {
         // name of the database file for your application
         private const val DATABASE_NAME = "cosmo.db"
         // any time you make changes to your database objects, you may have to increase the database version
-        private const val DATABASE_VERSION = 8
+        private const val DATABASE_VERSION = 9
         private val CONFIG_CLASSES = arrayOf<Class<*>>(SaintInfo::class.java, SkillsInfo::class.java, ImageInfo::class.java,
             Version::class.java, SaintHistory::class.java, TierInfo::class.java, SkillsHistory::class.java)
     }

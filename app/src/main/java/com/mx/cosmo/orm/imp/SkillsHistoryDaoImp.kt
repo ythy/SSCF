@@ -7,6 +7,7 @@ import com.j256.ormlite.field.DataType
 import com.j256.ormlite.stmt.Where
 import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SkillsHistory
+import com.mx.cosmo.orm.vo.SkillsInfo
 
 class SkillsHistoryDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExceptionDao<SkillsHistory, Int>(getDao(orm)) {
 
@@ -68,5 +69,44 @@ class SkillsHistoryDaoImp constructor(orm: OrmLiteSqliteOpenHelper) : RuntimeExc
         }
         return result
     }
+
+
+    fun querySkillsHistorContainsImage(skillsId:Int):SkillsHistory{
+        val qb = this.queryBuilder()
+        val sql = " SELECT ${SkillsHistory.TABLE_NAME}.${SkillsHistory.ID}, ${SkillsHistory.TABLE_NAME}.${SkillsHistory.COLUMN_VERSION}, " +
+                " ${SkillsHistory.TABLE_NAME}.${SkillsHistory.COLUMN_DESCRIPTION}, ${SkillsHistory.TABLE_NAME}.${SkillsHistory.COLUMN_EFFECTS}, " +
+                " ${SkillsHistory.TABLE_NAME}.${SkillsHistory.COLUMN_LEVEL}, ${SkillsHistory.TABLE_NAME}.${SkillsHistory.COLUMN_UNIT_ID}, " +
+                " ${ImageInfo.TABLE_NAME}.${ImageInfo.COLUMN_IMAGE}, ${SkillsHistory.TABLE_NAME}.${SkillsHistory.COLUMN_NAME} " +
+                " FROM ${SkillsHistory.TABLE_NAME} LEFT JOIN " +
+                " ${SkillsInfo.TABLE_NAME} " +
+                " ON " +
+                " ${SkillsHistory.TABLE_NAME}.${SkillsHistory.COLUMN_UNIT_ID} == ${SkillsInfo.TABLE_NAME}.${SkillsInfo.COLUMN_UNIT_ID} " +
+
+                " LEFT JOIN " +
+                " ${ImageInfo.TABLE_NAME} " +
+                " ON " +
+                " ${SkillsInfo.TABLE_NAME}.${SkillsInfo.COLUMN_IMAGE_ID} == ${ImageInfo.TABLE_NAME}.${ImageInfo.ID} " +
+                " WHERE   ${SkillsHistory.TABLE_NAME}.${SkillsHistory.ID} == $skillsId " +
+                " ORDER BY  ${SkillsHistory.TABLE_NAME}.${SkillsHistory.ID} DESC "
+
+        val result:MutableList<SkillsHistory> = mutableListOf()
+        val rawResults = this.queryRaw(sql,
+            arrayOf(DataType.INTEGER, DataType.STRING, DataType.STRING, DataType.STRING, DataType.INTEGER, DataType.INTEGER, DataType.BYTE_ARRAY, DataType.STRING))
+        for (resultArray in rawResults) {
+            val profile = SkillsHistory()
+            profile.id = resultArray[0] as Int
+            profile.version = resultArray[1].toString()
+            profile.description = resultArray[2].toString()
+            profile.effects = resultArray[3].toString()
+            profile.level = resultArray[4] as Int
+            profile.unitId = resultArray[5] as Int
+            if(resultArray[6] != null)
+                profile.image = resultArray[6] as ByteArray
+            profile.name = resultArray[7].toString()
+            result.add(profile)
+        }
+        return result[0]
+    }
+
 
 }

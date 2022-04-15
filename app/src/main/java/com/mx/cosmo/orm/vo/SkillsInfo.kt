@@ -11,6 +11,7 @@ class SkillsInfo {
         const val ID = "_id"
         const val COLUMN_SAINT_ID = "saint_id" // 10027701
         const val COLUMN_UNIT_ID = "unit_id" // 60305007
+        const val COLUMN_IMAGE_ID = "image_id"
     }
 
     @DatabaseField(generatedId = true, allowGeneratedIdInsert = true, columnName = ID)
@@ -21,6 +22,11 @@ class SkillsInfo {
 
     @DatabaseField(columnName = COLUMN_UNIT_ID)
     var unitId:Int = 0
+
+    @DatabaseField(columnName = COLUMN_IMAGE_ID)
+    var imageId:Int = 0
+
+    var image:ByteArray? = byteArrayOf()
 
     var details: SkillsHistory = SkillsHistory()
 }

@@ -1,5 +1,6 @@
 package com.mx.cosmo.activity
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
@@ -17,12 +18,14 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.mx.cosmo.R
 import com.mx.cosmo.adapter.BasicinfoPagerAdapter
+import com.mx.cosmo.adapter.SkillsPagerAdapter
 import com.mx.cosmo.adapter.TiersAdapter
 import com.mx.cosmo.common.FileUtils
 import com.mx.cosmo.common.Setting
 import com.mx.cosmo.common.Utils
 import com.mx.cosmo.fragment.BasicinfoFragment
 import com.mx.cosmo.fragment.SkillsFragment
+import com.mx.cosmo.fragment.SkillsFragment.Companion.REC_DATA_SKILLS_IMAGE
 import com.mx.cosmo.orm.vo.ImageInfo
 import com.mx.cosmo.orm.vo.SaintInfo
 import java.io.IOException
@@ -42,6 +45,7 @@ class DetailActivity: BaseActivity() {
     fun onBtnUpdateClickHandler(){
         mProgressDialog.show()
         Thread(Runnable {
+            var updateCount = 0
             if( mSaintInfo.imageFullId <= 0) {
                 val urlFull = URL(Setting.RESOURCES_REMOTE_URL + "${mSaintInfo.unitId}.png")
                 try {
@@ -50,11 +54,31 @@ class DetailActivity: BaseActivity() {
                     val imageInfo = mDbHelper.getImageInfoDao().createIfNotExists(ImageInfo(mSaintInfo.imageFull!!))
                     mSaintInfo.imageFullId = imageInfo.id
                     mDbHelper.getSaintInfoDao().update(mSaintInfo)
+                    updateCount++
                 } catch (e: IOException) {
                     Log.e(TAG, e.message)
                 }
             }
-            mHandler.sendEmptyMessage(1)
+            val skillsList = mDbHelper.getSkillsInfoDao().querySkills(mSaintInfo.unitId)
+            skillsList.forEach { skill ->
+                val url = URL(Setting.RESOURCES_REMOTE_URL + "${skill.unitId}_0.png")
+                try {
+                    if(skill.imageId <= 0) {
+                        val bmp = FileUtils.loadRemoteImage(url)
+                        val imageInfo = mDbHelper.getImageInfoDao()
+                            .createIfNotExists(ImageInfo(FileUtils.getBitmapAsByteArray(bmp)))
+                        skill.imageId = imageInfo.id
+                        mDbHelper.getSkillsInfoDao().update(skill)
+                        updateCount++
+                    }
+                }catch (e:IOException){
+                    Log.e(MainActivity.TAG, e.message)
+                }
+            }
+            if(updateCount > 0)
+                mHandler.sendEmptyMessage(1)
+            else
+                mHandler.sendEmptyMessage(2)
         }).start()
     }
 
@@ -92,9 +116,10 @@ class DetailActivity: BaseActivity() {
     }
 
     private fun setImages(){
-        if(mSaintInfo.imageFull != null)
+        if(mSaintInfo.imageFull != null){
             mRootView.image.setImageBitmap(BitmapFactory.decodeByteArray(mSaintInfo.imageFull, 0, mSaintInfo.imageFull!!.size))
-        else{
+            mRootView.image.visibility = View.VISIBLE
+        }else{
             mRootView.image.setImageBitmap(null)
             mRootView.image.visibility = View.GONE
         }
@@ -132,11 +157,11 @@ class DetailActivity: BaseActivity() {
         skillsList.forEachIndexed { index, element ->
             val skillsHis = mDbHelper.getSkillsHistoryDao().querySkillsHistory(element.unitId)
             val fragments = arrayListOf<Fragment>()
-            skillsHis.forEachIndexed { index, it ->
+            skillsHis.forEachIndexed { indexHis, it ->
                 val bundle = Bundle()
                 bundle.putInt("id", it.id)
-                if( index + 1 < skillsHis.size){
-                    bundle.putInt("lastId", skillsHis[index + 1].id)
+                if( indexHis + 1 < skillsHis.size){
+                    bundle.putInt("lastId", skillsHis[indexHis + 1].id)
                 }else{
                     bundle.putInt("lastId", -1)
                 }
@@ -159,23 +184,13 @@ class DetailActivity: BaseActivity() {
                 }
             }
         }
-
     }
+
 
     private fun setViewPager(viewPager:ViewPager, fragments:ArrayList<Fragment>){
-        viewPager.adapter = BasicinfoPagerAdapter(supportFragmentManager, fragments)
+        viewPager.adapter = SkillsPagerAdapter(supportFragmentManager, fragments)
         viewPager.currentItem = 0
-        //etViewPagerHeight(viewPager, 300f)
     }
-
-    private fun setViewPagerHeight(viewPager:ViewPager, height:Float){
-        val params = viewPager.getLayoutParams()
-        params.height = Utils.dip2px(this, height)
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT
-        viewPager.requestLayout()
-    }
-
-
 
     class MyHandler constructor(activity:DetailActivity):Handler(){
         private val weakReference:WeakReference<DetailActivity> = WeakReference(activity)
@@ -187,7 +202,13 @@ class DetailActivity: BaseActivity() {
                 msg.what == 1 -> {
                     activity.mProgressDialog.dismiss()
                     activity.setImages()
+                    val retIntent = Intent(REC_DATA_SKILLS_IMAGE)
+                    activity.sendBroadcast(retIntent)
                     Toast.makeText(activity, "update done", Toast.LENGTH_SHORT).show()
+                }
+                msg.what == 2 -> {
+                    activity.mProgressDialog.dismiss()
+                    Toast.makeText(activity, "update nothing", Toast.LENGTH_SHORT).show()
                 }
             }
         }
