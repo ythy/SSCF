@@ -255,6 +255,10 @@ class MainActivity: BaseActivity() {
                     handler.sendEmptyMessage(1)
                 }).start()
             }
+            R.id.action_h5-> {
+                val intent = Intent(this, WebActivity::class.java)
+                startActivity(intent)
+            }
             else -> {
 
             }

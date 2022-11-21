@@ -33,6 +33,7 @@
     <string name="menu_get_last_data">获取最新数据</string>
     <string name="menu_get_small_image">获取小图</string>
     <string name="menu_get_full_image">获取大图</string>
+    <string name="menu_web_view">H5</string>
     <string name="title_basic_info">BasicInfo:</string>
     <string name="float_placeholder">I\'m overflow text placeholder</string>
 </resources>
